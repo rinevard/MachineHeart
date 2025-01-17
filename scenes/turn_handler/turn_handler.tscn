@@ -1,0 +1,4 @@
+[gd_scene format=3 uid="uid://d1lcle4iesyii"]
+
+[node name="TurnHandler" type="Node2D"]
+metadata/_edit_lock_ = true

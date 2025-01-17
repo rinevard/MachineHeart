@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://b325ixwkxcp34"]
+
+[ext_resource type="Texture2D" uid="uid://bqdbof3nll7j2" path="res://icon.svg" id="1_0d1c3"]
+
+[node name="RedGodot" type="Sprite2D"]
+modulate = Color(1, 0.376212, 0.97216, 1)
+texture = ExtResource("1_0d1c3")

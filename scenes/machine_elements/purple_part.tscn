@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://cih0srmlmixrl"]
+
+[ext_resource type="Texture2D" uid="uid://bqdbof3nll7j2" path="res://icon.svg" id="1_5do8y"]
+[ext_resource type="Script" path="res://scenes/machine_elements/gun_part.gd" id="1_gln1t"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6j1u4"]
+radius = 59.1354
+
+[node name="PurplePart" type="Area2D"]
+script = ExtResource("1_gln1t")
+default_health = 4
+default_armor = 1
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.843937, 0.4859, 0.870498, 1)
+texture = ExtResource("1_5do8y")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_6j1u4")

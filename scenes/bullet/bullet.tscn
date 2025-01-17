@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://popovj3lxtrl"]
+
+[ext_resource type="Script" path="res://scenes/bullet/bullet.gd" id="1_64okd"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_q1ytd"]
+size = Vector2(80, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4wdry"]
+size = Vector2(80, 20)
+
+[node name="Bullet" type="Area2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_64okd")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0, 0, 0, 1)
+texture = SubResource("PlaceholderTexture2D_q1ytd")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_4wdry")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
