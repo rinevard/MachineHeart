@@ -1,4 +1,4 @@
-class_name MousePutHandler
+class_name MouseHandler
 extends Node2D
 
 # 在地图上放置一个新的节点（core或part）
@@ -8,6 +8,7 @@ extends Node2D
 #   core_team: Team - 如果放置的是core，指定其阵营（Friend或Enemy）
 #   prioritize_friend: bool - 当放置part同时与友方和敌方阵营分量相邻时，是否优先加入友方分量（默认true）
 signal successfully_put(scene_path: String, pos: Vector2i, core_team, prioritize_friend: bool)
+signal successfully_delete(pos: Vector2i, prioritize_friend: bool)
 
 @onready var highlight_tile_map_layer: TileMapLayer = $HighlightTileMapLayer
 var cursor_tile: Vector2i = Vector2i(-99, -99)
@@ -19,8 +20,8 @@ const BLACK_CORE = preload("res://scenes/machine_elements/black_core.tscn")
 
 func _process(_delta):
 	# 悬停高亮
+	cursor_tile = get_mouse_tilepos()
 	if selected_item != null:
-		cursor_tile = get_mouse_tilepos()
 		update_highlight_tile()
 
 func _unhandled_input(event):	
@@ -39,6 +40,11 @@ func _unhandled_input(event):
 		place_obj_mousepos(selected_item)
 		selected_item = null
 		update_highlight_tile()
+	
+	# 右键删除
+	if event.is_action_pressed("right_click") and \
+	Globals.pos_to_module.has(cursor_tile):
+		delete_obj_mousepos()
 
 func update_highlight_tile() -> void:
 	highlight_tile_map_layer.clear()
@@ -55,6 +61,12 @@ func place_obj_mousepos(scene_path: PackedScene):
 		successfully_put.emit(scene_path, mouse_tile_pos, Globals.Team.Enemy, false)
 	else:
 		successfully_put.emit(scene_path, mouse_tile_pos, Globals.Team.Friend, false)
+
+func delete_obj_mousepos():
+	var mouse_tile_pos: Vector2i = get_mouse_tilepos()
+	# 删除以后优先和友方合并
+	successfully_delete.emit(mouse_tile_pos, true)
+	
 
 func get_mouse_tilepos() -> Vector2i:
 	var mouse_global_pos = get_global_mouse_position()

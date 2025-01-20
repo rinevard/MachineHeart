@@ -1,7 +1,7 @@
 extends Node2D
 @onready var background_tile_map_layer: TileMapLayer = $BackgroundTileMapLayer
 @onready var turn_handler: TurnHandler = $TurnHandler
-@onready var mouse_put_handler: MousePutHandler = $MousePutHandler
+@onready var mouse_handler: MouseHandler = $MouseHandler
 # 以下皆为 tile_pos
 # 连通分量列表，每个元素是[core/null, part1, part2, ...]
 var components: Array = []
@@ -13,7 +13,8 @@ var core_to_machines: Dictionary = {}
 
 func _ready():
 	turn_handler.turn_ended.connect(_on_turn_ended)
-	mouse_put_handler.successfully_put.connect(_on_successfully_put)
+	mouse_handler.successfully_put.connect(_on_successfully_put)
+	mouse_handler.successfully_delete.connect(_on_successfully_delete)
 
 func _on_turn_ended():
 	activate_nodes()
@@ -169,7 +170,7 @@ func _merge_components(dst_idx: int, src_idx: int) -> void:
 #         pos - 放置位置
 #         core_team - 如果是core，指定其队伍
 #         prioritize_friend - 合并时是否优先合并到友方
-func _on_successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, prioritize_friend: bool = true) -> void:
+func _on_successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, prioritize_friend: bool) -> void:
 	# 实例化并放置
 	var rel_pos = background_tile_map_layer.map_to_local(pos)
 	var something: Node2D = scene_path.instantiate()
@@ -195,10 +196,14 @@ func _on_successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, pri
 			_merge_component(components.size() - 1, prioritize_friend)
 
 # 删除指定位置的节点
-func _on_successfully_delete(pos: Vector2i, prioritize_friend: bool = true) -> void:
+func _on_successfully_delete(pos: Vector2i, prioritize_friend: bool) -> void:
+	if not Globals.pos_to_module.has(pos):
+		push_error("successfully delete信号发出, 但", pos, "处没有物件！")
 	var original_idx = pos_to_component_idx[pos]
 	var original_component = components[original_idx]
 	var was_core = _is_core(pos)
+	var removed_scene: Node2D = Globals.pos_to_module[pos]
+	removed_scene.visible = false
 	
 	# 从映射中移除
 	pos_to_component_idx.erase(pos)
@@ -225,6 +230,8 @@ func _on_successfully_delete(pos: Vector2i, prioritize_friend: bool = true) -> v
 		var rep_pos = component[1] if component[0] == null else component[0]  # 用第一个非null位置作为代表
 		pos_to_component_idx[rep_pos] = components.size() - 1
 		_merge_component(components.size() - 1, prioritize_friend)
+	
+	removed_scene.queue_free()
 
 
 # 尝试将指定索引的分量与其他分量合并

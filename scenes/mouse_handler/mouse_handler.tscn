@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ctili2754wptn"]
 
-[ext_resource type="Script" path="res://scenes/mouse_put_handler/mouse_put_handler.gd" id="1_53xbo"]
+[ext_resource type="Script" path="res://scenes/mouse_handler/mouse_handler.gd" id="1_53xbo"]
 [ext_resource type="TileSet" uid="uid://b4f0qe47jrvty" path="res://resources/hexa_tiles.tres" id="2_g8en4"]
 
 [node name="MousePutHandler" type="Node2D"]

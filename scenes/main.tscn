@@ -2,7 +2,7 @@
 
 [ext_resource type="TileSet" uid="uid://b4f0qe47jrvty" path="res://resources/hexa_tiles.tres" id="1_5fgrd"]
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_m83rm"]
-[ext_resource type="PackedScene" uid="uid://ctili2754wptn" path="res://scenes/mouse_put_handler/mouse_put_handler.tscn" id="3_w2oib"]
+[ext_resource type="PackedScene" uid="uid://ctili2754wptn" path="res://scenes/mouse_handler/mouse_handler.tscn" id="3_w2oib"]
 [ext_resource type="PackedScene" uid="uid://d1lcle4iesyii" path="res://scenes/turn_handler/turn_handler.tscn" id="4_atj0k"]
 
 [node name="Main" type="Node2D"]
@@ -14,6 +14,6 @@ tile_map_data = PackedByteArray("AAD+//7/AQABAAAAAAD+////AQABAAAAAAD+/wAAAQABAAA
 tile_set = ExtResource("1_5fgrd")
 metadata/_edit_lock_ = true
 
-[node name="MousePutHandler" parent="." instance=ExtResource("3_w2oib")]
+[node name="MouseHandler" parent="." instance=ExtResource("3_w2oib")]
 
 [node name="TurnHandler" parent="." instance=ExtResource("4_atj0k")]
