@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bqdbof3nll7j2" path="res://icon.svg" id="2_ig4v8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n5xyy"]
-radius = 58.0775
+radius = 60.0
 
 [node name="BlueCore" type="Area2D"]
 collision_layer = 4

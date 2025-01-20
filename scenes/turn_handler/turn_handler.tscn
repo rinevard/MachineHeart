@@ -1,4 +1,16 @@
-[gd_scene format=3 uid="uid://d1lcle4iesyii"]
+[gd_scene load_steps=2 format=3 uid="uid://d1lcle4iesyii"]
+
+[ext_resource type="Script" path="res://scenes/turn_handler/turn_handler.gd" id="1_couwp"]
 
 [node name="TurnHandler" type="Node2D"]
+script = ExtResource("1_couwp")
 metadata/_edit_lock_ = true
+
+[node name="Button" type="Button" parent="."]
+offset_left = 1624.0
+offset_top = 913.0
+offset_right = 1840.0
+offset_bottom = 1029.0
+text = "回合结束"
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
