@@ -8,8 +8,6 @@ var components: Array = []
 # 位置到分量索引的映射
 var pos_to_component_idx: Dictionary = {}
 # Globals.pos_to_module
-# core_pos -> [module_pos_1, module_pos_2, ...]
-var core_to_machines: Dictionary = {}
 
 func _ready():
 	turn_handler.turn_ended.connect(_on_turn_ended)
@@ -17,57 +15,124 @@ func _ready():
 	mouse_handler.successfully_delete.connect(_on_successfully_delete)
 
 func _on_turn_ended():
-	activate_nodes()
+	for component in components:
+		activate_nodes(component)
 
-func activate_nodes():
-	return
-	# 应当包含若干个列表, 
-	# activate_parts[k] 表示第 k + 1 轮被同时激活的节点
-	var activate_parts: Array = []
+# 根据两个位置的相对关系确定方向
+# 返回 Globals.HexDirection 中的一个值
+func _get_direction(from_pos: Vector2i, to_pos: Vector2i) -> int:
+	var diff = to_pos - from_pos
 	
-	# 用 BFS 更新 activate_parts
-	for core_pos in core_to_machines:
-		var machine: Array = core_to_machines[core_pos]
+	if diff == Vector2i(1, 0):
+		return Globals.HexDirection.RIGHT
+	elif diff == Vector2i(-1, 0):
+		return Globals.HexDirection.LEFT
 		
-		var visited: Dictionary = {}
-		var cur_layer: Dictionary = {core_pos: [1]} # 初始能量为1
-		visited[core_pos] = true
-		
-		while not cur_layer.is_empty():
-			var next_layer: Dictionary = {}
-			
-			# 遍历当前层的所有节点
-			for pos in cur_layer:
-				var energies: Array = cur_layer[pos]
-				var energy_sum: int = 0
-				for e in energies:
-					energy_sum += e
-					
-				# 遍历machine中的所有部件，寻找相邻节点
-				for module_pos in machine:
-					if is_adjacent(pos, module_pos):
-						if module_pos in next_layer:
-							next_layer[module_pos].append(energy_sum)
-						elif module_pos in visited:
-							continue
-						else:
-							next_layer[module_pos] = [energy_sum]
-							visited[module_pos] = true
-			
-			# 更新activate_parts
-			if not cur_layer.is_empty():
-				var layer_dict: Dictionary = {}
-				for pos in cur_layer:
-					if pos in Globals.pos_to_module:
-						layer_dict[pos] = [Globals.pos_to_module[pos], cur_layer[pos]]
-				if not layer_dict.is_empty():
-					activate_parts.append(layer_dict)
-			
-			cur_layer = next_layer
-		
-		print(activate_parts)
+	if from_pos.y % 2 == 0:  # 起点y为偶数
+		match diff:
+			Vector2i(0, -1):
+				return Globals.HexDirection.UP_RIGHT
+			Vector2i(-1, -1):
+				return Globals.HexDirection.UP_LEFT
+			Vector2i(0, 1):
+				return Globals.HexDirection.DOWN_RIGHT
+			Vector2i(-1, 1):
+				return Globals.HexDirection.DOWN_LEFT
+	else:  # 起点y为奇数
+		match diff:
+			Vector2i(1, -1):
+				return Globals.HexDirection.UP_RIGHT
+			Vector2i(0, -1):
+				return Globals.HexDirection.UP_LEFT
+			Vector2i(1, 1):
+				return Globals.HexDirection.DOWN_RIGHT
+			Vector2i(0, 1):
+				return Globals.HexDirection.DOWN_LEFT
+				
+	push_error("无效的方向！")
+	return -1
 
+# 将方向枚举转换为可读字符串
+func _direction_to_string(direction: int) -> String:
+	match direction:
+		Globals.HexDirection.RIGHT:
+			return "RIGHT"
+		Globals.HexDirection.LEFT:
+			return "LEFT"
+		Globals.HexDirection.DOWN_RIGHT:
+			return "DOWN_RIGHT"
+		Globals.HexDirection.DOWN_LEFT:
+			return "DOWN_LEFT"
+		Globals.HexDirection.UP_RIGHT:
+			return "UP_RIGHT"
+		Globals.HexDirection.UP_LEFT:
+			return "UP_LEFT"
+		_:
+			return "UNKNOWN"
 
+# 计算组件中各个部分的激活顺序和能量传递
+func activate_nodes(component: Array) -> void:
+	if component.is_empty() or component[0] == null:
+		return
+	
+	var core_pos = component[0]
+	var activate_parts = []
+	var visited = {core_pos: true}
+	var cur_layer = {core_pos: [[1.0, -1]]}  # core的方向标记为-1
+	
+	while not cur_layer.is_empty():
+		var next_layer = {}
+		var current_layer_info = {}
+		
+		for pos in component:
+			if pos == null or pos == core_pos:
+				continue
+				
+			var energies_with_directions = []
+			for cur_pos in cur_layer:
+				if is_adjacent(pos, cur_pos):
+					var direction = _get_direction(cur_pos, pos)
+					for energy_info in cur_layer[cur_pos]:
+						energies_with_directions.append([energy_info[0], direction])
+			
+			if not energies_with_directions.is_empty():
+				if pos in next_layer:
+					next_layer[pos].append_array(energies_with_directions)
+				elif not pos in visited:
+					next_layer[pos] = energies_with_directions
+					visited[pos] = true
+		
+		if not next_layer.is_empty():
+			var layer_info = {}
+			for pos in next_layer:
+				if pos != core_pos:
+					layer_info[pos] = [
+						Globals.pos_to_module[pos],
+						next_layer[pos]
+					]
+			if not layer_info.is_empty():
+				activate_parts.append(layer_info)
+
+		# 在更新cur_layer之前合并每个位置的能量
+		var merged_next_layer = {}
+		for pos in next_layer:
+			var total_energy = 0.0
+			for energy_info in next_layer[pos]:
+				total_energy += energy_info[0]
+			# 只保留一个合并后的能量值，方向使用第一个能量的方向
+			merged_next_layer[pos] = [[total_energy, next_layer[pos][0][1]]]
+		cur_layer = merged_next_layer
+	
+	# 打印激活信息（用于测试）
+	print("Activation layers:")
+	for i in range(activate_parts.size()):
+		print("Layer ", i + 1, ":")
+		for pos in activate_parts[i]:
+			var scene = activate_parts[i][pos][0]
+			var energies_dirs = activate_parts[i][pos][1]
+			print("\tPosition: ", pos, " Scene: ", scene)
+			for energy_dir in energies_dirs:
+				print("\t\tEnergy: ", energy_dir[0], " Shooting Direction: ", _direction_to_string(energy_dir[1]))
 
 # 判断pos处是否有module且是core
 func _is_core(pos: Vector2i) -> bool:
@@ -122,8 +187,6 @@ func _find_connected_components_after_removal(component: Array, removed_pos: Vec
 		result[core_idx] = temp
 	
 	return result
-
-
 
 # 获取与给定component相邻的所有component的索引
 func _get_adjacent_component_indices(component: Array) -> Array:
@@ -299,8 +362,6 @@ func _update_info_after_components_changed() -> void:
 			if pos != null:  # 跳过可能的null（表示无core的标记）
 				pos_to_component_idx[pos] = j
 	print("components: \n", components, "\n")
-
-
 
 func get_neighbors(pos: Vector2i) -> Array[Vector2i]:
 	var x: int = pos.x
