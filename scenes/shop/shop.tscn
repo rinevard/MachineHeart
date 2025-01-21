@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3 uid="uid://dk43158ti5kq2"]
+
+[ext_resource type="Script" path="res://scenes/shop/shop.gd" id="1_cxwj3"]
+[ext_resource type="PackedScene" uid="uid://8qtr1v08wxfm" path="res://scenes/shop/shop_item.tscn" id="1_epao8"]
+
+[node name="Shop" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_cxwj3")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -200.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="ShopItem1" parent="CenterContainer/HBoxContainer" instance=ExtResource("1_epao8")]
+layout_mode = 2
+
+[node name="ShopItem2" parent="CenterContainer/HBoxContainer" instance=ExtResource("1_epao8")]
+layout_mode = 2
+
+[node name="ShopItem3" parent="CenterContainer/HBoxContainer" instance=ExtResource("1_epao8")]
+layout_mode = 2
+
+[node name="ShopItem4" parent="CenterContainer/HBoxContainer" instance=ExtResource("1_epao8")]
+layout_mode = 2
+
+[node name="RefreshButton" type="Button" parent="CenterContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2

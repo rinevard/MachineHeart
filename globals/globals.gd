@@ -1,5 +1,13 @@
 extends Node
 
+var is_picking: bool = false # 该变量表示玩家是否抓着什么东西, 如果抓着就不能买东西了
+
+var all_possible_item_paths: Array[PackedScene] = [
+preload("res://scenes/machine_elements/black_core.tscn"), 
+preload("res://scenes/machine_elements/blue_core.tscn"),
+preload("res://scenes/machine_elements/purple_part.tscn")
+]
+
 enum Team {Friend, Enemy, Neutral}
 enum MachineType {Core, Part, Undefined}
 enum HexDirection {

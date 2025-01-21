@@ -24,23 +24,14 @@ func _process(_delta):
 	if selected_item != null:
 		update_highlight_tile()
 
-func _unhandled_input(event):	
-	# 按键选择放置的物品
-	# 暂时以 q 为紫色, w 为蓝色
-	if event.is_action_pressed("q"):
-		selected_item = PURPLE_PART
-	elif event.is_action_pressed("w"):
-		selected_item = BLUE_CORE
-	elif event.is_action_pressed("e"):
-		selected_item = BLACK_CORE
-
+func _unhandled_input(event):
 	# 左键放置物品
-	if ((selected_item != null) and event.is_action_pressed("left_click")) and \
+	if Globals.is_picking and ((selected_item != null) and event.is_action_pressed("left_click")) and \
 	not Globals.pos_to_module.has(cursor_tile):
 		place_obj_mousepos(selected_item)
 		selected_item = null
 		update_highlight_tile()
-	
+		Globals.is_picking = false
 	# 右键删除
 	if event.is_action_pressed("right_click") and \
 	Globals.pos_to_module.has(cursor_tile):
@@ -71,3 +62,8 @@ func get_mouse_tilepos() -> Vector2i:
 	var mouse_global_pos = get_global_mouse_position()
 	var mouse_local_pos_for_tilemap = highlight_tile_map_layer.to_local(mouse_global_pos)
 	return highlight_tile_map_layer.local_to_map(mouse_local_pos_for_tilemap)
+
+
+func _on_shop_item_bought(item: PackedScene):
+	Globals.is_picking = true
+	selected_item = item
