@@ -17,3 +17,5 @@ metadata/_edit_lock_ = true
 [node name="MouseHandler" parent="." instance=ExtResource("3_w2oib")]
 
 [node name="TurnHandler" parent="." instance=ExtResource("4_atj0k")]
+
+[node name="TeamShower" type="CanvasLayer" parent="."]

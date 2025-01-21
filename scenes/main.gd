@@ -2,6 +2,8 @@ extends Node2D
 @onready var background_tile_map_layer: TileMapLayer = $BackgroundTileMapLayer
 @onready var turn_handler: TurnHandler = $TurnHandler
 @onready var mouse_handler: MouseHandler = $MouseHandler
+@onready var team_shower: CanvasLayer = $TeamShower
+
 # 以下皆为 tile_pos
 # 连通分量列表，每个元素是[core/null, part1, part2, ...]
 var components: Array = []
@@ -52,30 +54,14 @@ func _get_direction(from_pos: Vector2i, to_pos: Vector2i) -> int:
 	push_error("无效的方向！")
 	return -1
 
-# 将方向枚举转换为可读字符串
-func _direction_to_string(direction: int) -> String:
-	match direction:
-		Globals.HexDirection.RIGHT:
-			return "RIGHT"
-		Globals.HexDirection.LEFT:
-			return "LEFT"
-		Globals.HexDirection.DOWN_RIGHT:
-			return "DOWN_RIGHT"
-		Globals.HexDirection.DOWN_LEFT:
-			return "DOWN_LEFT"
-		Globals.HexDirection.UP_RIGHT:
-			return "UP_RIGHT"
-		Globals.HexDirection.UP_LEFT:
-			return "UP_LEFT"
-		_:
-			return "UNKNOWN"
-
 # 计算组件中各个部分的激活顺序和能量传递
 func activate_nodes(component: Array) -> void:
 	if component.is_empty() or component[0] == null:
 		return
 	
 	var core_pos = component[0]
+	# activate_parts 里
+	# 每个元素形如 {pos: [scene, [[energy1, dir1], [energy2, dir2], ...]}
 	var activate_parts = []
 	var visited = {core_pos: true}
 	var cur_layer = {core_pos: [[1.0, -1]]}  # core的方向标记为-1
@@ -122,22 +108,33 @@ func activate_nodes(component: Array) -> void:
 			# 只保留一个合并后的能量值，方向使用第一个能量的方向
 			merged_next_layer[pos] = [[total_energy, next_layer[pos][0][1]]]
 		cur_layer = merged_next_layer
-	
-	# 打印激活信息（用于测试）
-	print("Activation layers:")
+
+	# 按顺序激活零件
 	for i in range(activate_parts.size()):
-		print("Layer ", i + 1, ":")
 		for pos in activate_parts[i]:
 			var scene = activate_parts[i][pos][0]
 			var energies_dirs = activate_parts[i][pos][1]
-			print("\tPosition: ", pos, " Scene: ", scene)
 			for energy_dir in energies_dirs:
-				print("\t\tEnergy: ", energy_dir[0], " Shooting Direction: ", _direction_to_string(energy_dir[1]))
+				if scene.has_method("activate"):
+					scene.activate(energy_dir[0], energy_dir[1])
+
+	# 打印激活信息（用于测试）
+	#print("\n-------------------\n", activate_parts, "\n-------------------\n")
+	#print("Activation layers:")
+	#for i in range(activate_parts.size()):
+		#print("Layer ", i + 1, ":")
+		#for pos in activate_parts[i]:
+			#var scene = activate_parts[i][pos][0]
+			#var energies_dirs = activate_parts[i][pos][1]
+			#print("\tPosition: ", pos, " Scene: ", scene)
+			#for energy_dir in energies_dirs:
+				#if scene.has_method("activate"):
+					#scene.activate(energy_dir[0], energy_dir[1])
+				#print("\t\tEnergy: ", energy_dir[0], " Shooting Direction: ", Globals.direction_to_string(energy_dir[1]))
 
 # 判断pos处是否有module且是core
 func _is_core(pos: Vector2i) -> bool:
 	return Globals.pos_to_module.has(pos) and Globals.pos_to_module[pos].type == Globals.MachineType.Core
-
 
 # 找出一个component中的所有连通块，返回形如[core/null, pos1, pos2...]的数组列表
 # 对于有core的连通块，确保core位置在首位；对于无core的连通块，首位为null
@@ -243,8 +240,11 @@ func _on_successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, pri
 	if something.get("type") == null or something.get("team") == null:
 		push_error("放置了一个没有type或team属性的东西")
 		return
-	
+	assert(something.has_method("init_module"), "放置了一个没有 init_module 的东西: " + something.name)
+	assert(something.has_signal("died"), "放置了一个没有 died 信号的东西: " + something.name)
 	Globals.pos_to_module[pos] = something
+	something.init_module(pos)
+	something.died.connect(_on_successfully_delete)
 	
 	match something.type:
 		Globals.MachineType.Core:
@@ -267,6 +267,9 @@ func _on_successfully_delete(pos: Vector2i, prioritize_friend: bool) -> void:
 	var was_core = _is_core(pos)
 	var removed_scene: Node2D = Globals.pos_to_module[pos]
 	removed_scene.visible = false
+	print("该场景被visible false: ", removed_scene)
+	print("该场景被queue free: ", removed_scene)
+	removed_scene.call_deferred("queue_free")
 	
 	# 从映射中移除
 	pos_to_component_idx.erase(pos)
@@ -293,9 +296,6 @@ func _on_successfully_delete(pos: Vector2i, prioritize_friend: bool) -> void:
 		var rep_pos = component[1] if component[0] == null else component[0]  # 用第一个非null位置作为代表
 		pos_to_component_idx[rep_pos] = components.size() - 1
 		_merge_component(components.size() - 1, prioritize_friend)
-	
-	removed_scene.queue_free()
-
 
 # 尝试将指定索引的分量与其他分量合并
 # params: component_idx - 要合并的分量索引
@@ -362,6 +362,39 @@ func _update_info_after_components_changed() -> void:
 			if pos != null:  # 跳过可能的null（表示无core的标记）
 				pos_to_component_idx[pos] = j
 	print("components: \n", components, "\n")
+	
+	# TODO
+	# === 以下是新增的可视化代码 ===
+	# 清除之前的所有标记
+	for child in team_shower.get_children():
+		child.queue_free()
+	
+	# 为每个component添加标记
+	for component in components:
+		var team = Globals.Team.Neutral
+		if component[0] != null:  # 如果有core，获取其阵营
+			team = Globals.pos_to_module[component[0]].team
+		
+		# 根据阵营选择颜色
+		var color = Color.YELLOW  # 默认中立黄色
+		if team == Globals.Team.Friend:
+			color = Color.GREEN
+		elif team == Globals.Team.Enemy:
+			color = Color.RED
+		
+		# 为component中的每个位置添加标记点
+		for pos in component:
+			if pos != null:  # 跳过null标记
+				var local_pos = background_tile_map_layer.map_to_local(pos)
+				var global_pos = background_tile_map_layer.to_global(local_pos)
+				
+				# 创建标记点
+				var dot = ColorRect.new()
+				dot.size = Vector2(28, 28)  # 4x4像素的小点
+				dot.position = global_pos - dot.size/2  # 居中放置
+				dot.color = color
+				dot.color.a = 0.7  # 设置透明度
+				team_shower.add_child(dot)
 
 func get_neighbors(pos: Vector2i) -> Array[Vector2i]:
 	var x: int = pos.x

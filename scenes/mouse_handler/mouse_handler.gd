@@ -66,7 +66,6 @@ func delete_obj_mousepos():
 	var mouse_tile_pos: Vector2i = get_mouse_tilepos()
 	# 删除以后优先和友方合并
 	successfully_delete.emit(mouse_tile_pos, true)
-	
 
 func get_mouse_tilepos() -> Vector2i:
 	var mouse_global_pos = get_global_mouse_position()

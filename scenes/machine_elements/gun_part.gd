@@ -1,11 +1,10 @@
 extends MachinePart
 
-var dir: Vector2 = Vector2(1, 0)
 const BULLET = preload("res://scenes/bullet/bullet.tscn")
 
-func activate():
-	super.activate()
+func activate(energy: int, energy_dir: int):
+	super.activate(energy, energy_dir)
 	# 测试用的子弹射击
 	var new_bullet: Bullet = BULLET.instantiate()
-	new_bullet.init_bullet(dir, team)
+	new_bullet.init_bullet(energy, Globals.direcToVec(energy_dir), team)
 	add_child(new_bullet)

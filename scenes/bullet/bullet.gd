@@ -1,6 +1,7 @@
 class_name Bullet
 extends Area2D
 
+var energy: int = 1
 var speed = 300
 var direction = Vector2(1, 0)
 var team = Globals.Team.Neutral
@@ -8,13 +9,18 @@ var team = Globals.Team.Neutral
 func _physics_process(delta):
 	position += delta * speed * direction.normalized()
 
-func init_bullet(dir: Vector2, new_team):
+func init_bullet(new_energy: int, dir: Vector2, new_team):
+	energy = new_energy
 	direction = dir.normalized()
 	rotation = dir.angle()
 	update_team(new_team)
 
 func update_team(new_team):
 	team = new_team
+	call_deferred("_update_collision_mask")
+	return
+
+func _update_collision_mask() -> void:
 	match team:
 		Globals.Team.Friend:
 			set_collision_mask_value(1, false)
@@ -29,9 +35,10 @@ func update_team(new_team):
 			set_collision_mask_value(2, false)
 			set_collision_mask_value(3, false)
 		_:
-			push_error("调用 init_bullet 时, team 不是任何 globals 里预定义的任何一类")	
-	return
+			push_error("调用 init_bullet 时, team 不是任何 globals 里预定义的任何一类")
 
 func _on_area_entered(area: Area2D):
 	print("bullet hit ", area.name)
+	if area.has_method("hurt"):
+		area.hurt(energy)
 	queue_free()
