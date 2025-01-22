@@ -7,7 +7,7 @@ extends Node2D
 #   pos: Vector2i - 放置的网格坐标
 #   core_team: Team - 如果放置的是core，指定其阵营（Friend或Enemy）
 #   prioritize_friend: bool - 当放置part同时与友方和敌方阵营分量相邻时，是否优先加入友方分量（默认true）
-signal successfully_put(scene_path: String, pos: Vector2i, core_team, prioritize_friend: bool)
+signal successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, prioritize_friend: bool)
 signal successfully_delete(pos: Vector2i, prioritize_friend: bool)
 
 @onready var highlight_tile_map_layer: TileMapLayer = $HighlightTileMapLayer
@@ -46,15 +46,19 @@ func update_highlight_tile() -> void:
 
 func place_obj_mousepos(scene_path: PackedScene):
 	var mouse_tile_pos: Vector2i = get_mouse_tilepos()
-	# 手动放置的核心的队伍为友方
-	# 测试用test: 把红色core设置为敌人
-	if (scene_path == BLACK_CORE):
-		successfully_put.emit(scene_path, mouse_tile_pos, Globals.Team.Enemy, false)
-	else:
-		successfully_put.emit(scene_path, mouse_tile_pos, Globals.Team.Friend, false)
+	# 手动放置的队伍为友方
+	successfully_put.emit(scene_path, mouse_tile_pos, Globals.Team.Friend, true)
 
 func delete_obj_mousepos():
 	var mouse_tile_pos: Vector2i = get_mouse_tilepos()
+	if not Globals.pos_to_module.has(mouse_tile_pos):
+		return
+	var module: Node2D = Globals.pos_to_module[mouse_tile_pos]
+	assert(module.get("team") != null, "module 没有阵营!")
+	assert(module.get("type") != null, "module 没有 machine_type!")
+	# 只能删除友方零件, 不能删除核心或是别的阵营的东西
+	if module.team != Globals.Team.Friend or module.type == Globals.MachineType.Core:
+		return
 	# 删除以后优先和友方合并
 	successfully_delete.emit(mouse_tile_pos, true)
 

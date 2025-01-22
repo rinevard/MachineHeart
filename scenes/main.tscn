@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=4 uid="uid://cwiectn7r5abn"]
+[gd_scene load_steps=7 format=4 uid="uid://cwiectn7r5abn"]
 
 [ext_resource type="TileSet" uid="uid://b4f0qe47jrvty" path="res://resources/hexa_tiles.tres" id="1_5fgrd"]
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_m83rm"]
 [ext_resource type="PackedScene" uid="uid://ctili2754wptn" path="res://scenes/mouse_handler/mouse_handler.tscn" id="3_w2oib"]
 [ext_resource type="PackedScene" uid="uid://d1lcle4iesyii" path="res://scenes/turn_handler/turn_handler.tscn" id="4_atj0k"]
 [ext_resource type="PackedScene" uid="uid://dk43158ti5kq2" path="res://scenes/shop/shop.tscn" id="5_3cip6"]
+[ext_resource type="PackedScene" uid="uid://tr36rhnfjnpr" path="res://scenes/enemy_creator/enemy_creator.tscn" id="6_3kirc"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_m83rm")
@@ -22,6 +23,8 @@ metadata/_edit_lock_ = true
 [node name="MouseHandler" parent="." instance=ExtResource("3_w2oib")]
 
 [node name="TurnHandler" parent="." instance=ExtResource("4_atj0k")]
+
+[node name="EnemyCreator" parent="." instance=ExtResource("6_3kirc")]
 
 [node name="TeamShower" type="CanvasLayer" parent="."]
 

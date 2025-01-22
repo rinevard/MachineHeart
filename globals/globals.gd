@@ -2,11 +2,17 @@ extends Node
 
 var is_picking: bool = false # 该变量表示玩家是否抓着什么东西, 如果抓着就不能买东西了
 
+var map_size: int = 12
+
+# 多写几遍重复内容就能实现 "加权" 了
 var all_possible_item_paths: Array[PackedScene] = [
-preload("res://scenes/machine_elements/black_core.tscn"), 
 preload("res://scenes/machine_elements/blue_core.tscn"),
 preload("res://scenes/machine_elements/purple_part.tscn")
 ]
+var all_possible_part_paths: Array[PackedScene] = [
+preload("res://scenes/machine_elements/purple_part.tscn")
+]
+var enemy_core_path: PackedScene = preload("res://scenes/machine_elements/black_core.tscn")
 
 enum Team {Friend, Enemy, Neutral}
 enum MachineType {Core, Part, Undefined}

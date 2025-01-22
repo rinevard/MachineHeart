@@ -3,6 +3,7 @@ extends Node2D
 @onready var turn_handler: TurnHandler = $TurnHandler
 @onready var mouse_handler: MouseHandler = $MouseHandler
 @onready var team_shower: CanvasLayer = $TeamShower
+@onready var enemy_creator: EnemyCreator = $EnemyCreator
 
 # 以下皆为 tile_pos
 # 连通分量列表，每个元素是[core/null, part1, part2, ...]
@@ -10,13 +11,25 @@ var components: Array = []
 # 位置到分量索引的映射
 var pos_to_component_idx: Dictionary = {}
 # Globals.pos_to_module
+var cur_turn: int = 0
 
 func _ready():
 	turn_handler.turn_ended.connect(_on_turn_ended)
 	mouse_handler.successfully_put.connect(_on_successfully_put)
+	enemy_creator.successfully_put.connect(_on_successfully_put)
 	mouse_handler.successfully_delete.connect(_on_successfully_delete)
+	#------------test---------------
+	_create_enemy(5)
+	#------------test---------------
 
 func _on_turn_ended():
+	#------------test---------------
+	cur_turn += 1
+	if (cur_turn > 5):
+		_create_enemy(randi_range(4, 10))
+		cur_turn = 0
+	#------------test---------------
+	
 	for component in components:
 		activate_nodes(component)
 
@@ -257,6 +270,7 @@ func _on_successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, pri
 			components.append([null, pos])
 			pos_to_component_idx[pos] = components.size() - 1
 			_merge_component(components.size() - 1, prioritize_friend)
+	_update_info_after_components_changed()
 
 # 删除指定位置的节点
 func _on_successfully_delete(pos: Vector2i, prioritize_friend: bool) -> void:
@@ -296,6 +310,7 @@ func _on_successfully_delete(pos: Vector2i, prioritize_friend: bool) -> void:
 		var rep_pos = component[1] if component[0] == null else component[0]  # 用第一个非null位置作为代表
 		pos_to_component_idx[rep_pos] = components.size() - 1
 		_merge_component(components.size() - 1, prioritize_friend)
+	_update_info_after_components_changed()
 
 # 尝试将指定索引的分量与其他分量合并
 # params: component_idx - 要合并的分量索引
@@ -361,6 +376,13 @@ func _update_info_after_components_changed() -> void:
 		for pos in components[j]:
 			if pos != null:  # 跳过可能的null（表示无core的标记）
 				pos_to_component_idx[pos] = j
+	
+	# 更新零件阵营
+	for component in components:
+		var core_team = Globals.Team.Neutral if component[0] == null else Globals.pos_to_module[component[0]].team
+		for j in range(1, component.size()):
+			Globals.pos_to_module[component[j]].team = core_team
+		
 	print("components: \n", components, "\n")
 	
 	# TODO
@@ -395,6 +417,93 @@ func _update_info_after_components_changed() -> void:
 				dot.color = color
 				dot.color.a = 0.7  # 设置透明度
 				team_shower.add_child(dot)
+
+func _create_enemy(enemy_size: int) -> void:
+	# 初始化所有可能的位置
+	var all_possible_positions: Array[Vector2i] = []
+	for x in range(Globals.map_size):
+		for y in range(Globals.map_size):
+			var pos = Vector2i(x, y)
+			if not Globals.pos_to_module.has(pos):
+				all_possible_positions.append(pos)
+	
+	# 如果没有可用位置，直接返回
+	if all_possible_positions.is_empty():
+		return
+	
+	# 选择起始点
+	var start_pos: Vector2i = all_possible_positions.pick_random()
+	
+	# BFS探测可用空间
+	var available_count: int = 0
+	var visited: Dictionary = {}
+	var queue: Array[Vector2i] = [start_pos]
+	visited[start_pos] = true
+	
+	while queue.size() > 0:
+		var current: Vector2i = queue.pop_front()
+		available_count += 1
+		
+		for next_pos in get_neighbors(current):
+			if (next_pos.x >= 0 and next_pos.x < Globals.map_size and 
+				next_pos.y >= 0 and next_pos.y < Globals.map_size and 
+				not Globals.pos_to_module.has(next_pos) and
+				not visited.has(next_pos)):
+					queue.push_back(next_pos)
+					visited[next_pos] = true
+	
+	# 取可用空间和目标数量的较小值
+	var target_size: int = mini(enemy_size, available_count)
+	
+	# 开始生成实际位置
+	var positions: Array[Vector2i] = [start_pos]
+	var current_pos: Vector2i = start_pos
+	
+	while positions.size() < target_size:
+		var neighbors: Array = get_neighbors(current_pos)
+		var valid_neighbors: Array[Vector2i] = []
+		
+		for n in neighbors:
+			if (n.x >= 0 and n.x < Globals.map_size and 
+				n.y >= 0 and n.y < Globals.map_size and 
+				not Globals.pos_to_module.has(n) and
+				not positions.has(n)):
+					valid_neighbors.append(n)
+		
+		if valid_neighbors.size() > 0:
+			var weighted_neighbors: Array = []
+			for n in valid_neighbors:
+				var neighbor_count: int = 0
+				for nn in get_neighbors(n):
+					if positions.has(nn):
+						neighbor_count += 1
+				weighted_neighbors.append({
+					"pos": n,
+					"weight": 1 + neighbor_count * 2
+				})
+			
+			var total_weight: int = 0
+			for n in weighted_neighbors:
+				total_weight += n.weight
+			
+			var random_weight: int = randi() % total_weight
+			var chosen_pos: Vector2i
+			
+			for n in weighted_neighbors:
+				random_weight -= n.weight
+				if random_weight < 0:
+					chosen_pos = n.pos
+					break
+			
+			if not chosen_pos:
+				chosen_pos = weighted_neighbors[-1].pos
+			
+			positions.append(chosen_pos)
+			current_pos = chosen_pos
+		else:
+			current_pos = positions[randi() % positions.size()]
+	
+	enemy_creator.create_enemy(positions)
 
 func get_neighbors(pos: Vector2i) -> Array[Vector2i]:
 	var x: int = pos.x
