@@ -1,5 +1,5 @@
 class_name TurnHandler
-extends Node2D
+extends Control
 signal turn_ended
 
 func _on_button_pressed():

@@ -36,7 +36,7 @@ func _unhandled_input(event):
 func update_highlight_tile() -> void:
 	highlight_tile_map_layer.clear()
 	# 如果有选中的物件才悬停高亮, 否则无高亮
-	if selected_item != null:
+	if selected_item != null and not Globals.pos_to_module.has(cursor_tile):
 		highlight_tile_map_layer.set_cell(cursor_tile, 1, Vector2i(1, 1))
 	return
 

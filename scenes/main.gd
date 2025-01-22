@@ -1,8 +1,9 @@
 extends Node2D
 @onready var background_tile_map_layer: TileMapLayer = $BackgroundTileMapLayer
-@onready var turn_handler: TurnHandler = $TurnHandler
+@onready var team_tile_map_layer = $TeamTileMapLayer
+@onready var turn_handler = $ShopCanvasLayer/TurnHandler
+
 @onready var mouse_handler: MouseHandler = $MouseHandler
-@onready var team_shower: CanvasLayer = $TeamShower
 @onready var enemy_creator: EnemyCreator = $EnemyCreator
 
 # 以下皆为 tile_pos
@@ -25,7 +26,7 @@ func _ready():
 func _on_turn_ended():
 	#------------test---------------
 	cur_turn += 1
-	if (cur_turn > 5):
+	if (cur_turn > 2):
 		_create_enemy(randi_range(4, 10))
 		cur_turn = 0
 	#------------test---------------
@@ -366,45 +367,33 @@ func _update_info_after_components_changed() -> void:
 		var core_team = Globals.Team.Neutral if component[0] == null else Globals.pos_to_module[component[0]].team
 		for j in range(1, component.size()):
 			Globals.pos_to_module[component[j]].team = core_team
-	
-	# TODO
-	# === 以下是新增的可视化代码 ===
-	# 清除之前的所有标记
-	for child in team_shower.get_children():
-		child.queue_free()
-	
-	# 为每个component添加标记
+	_update_team_tilemap()
+
+## 根据阵营更新 tilemap 的背景显示
+func _update_team_tilemap():
+	team_tile_map_layer.clear()
 	for component in components:
-		var team = Globals.Team.Neutral
-		if component[0] != null:  # 如果有core，获取其阵营
-			team = Globals.pos_to_module[component[0]].team
-		
-		# 根据阵营选择颜色
-		var color = Color.YELLOW  # 默认中立黄色
-		if team == Globals.Team.Friend:
-			color = Color.GREEN
-		elif team == Globals.Team.Enemy:
-			color = Color.RED
-		
-		# 为component中的每个位置添加标记点
-		for pos in component:
-			if pos != null:  # 跳过null标记
-				var local_pos = background_tile_map_layer.map_to_local(pos)
-				var global_pos = background_tile_map_layer.to_global(local_pos)
-				
-				# 创建标记点
-				var dot = ColorRect.new()
-				dot.size = Vector2(28, 28)  # 4x4像素的小点
-				dot.position = global_pos - dot.size/2  # 居中放置
-				dot.color = color
-				dot.color.a = 0.7  # 设置透明度
-				team_shower.add_child(dot)
+		if component[0] == null:
+			for i in range(1, component.size()):
+				var pos = component[i]
+				team_tile_map_layer.set_cell(pos, 1, Vector2i(3, 9)) # 中立
+		else:
+			assert(Globals.pos_to_module.has(component[0]), str(component[0]) + "不在globals的记录里")
+			match Globals.pos_to_module[component[0]].team:
+				Globals.Team.Friend:
+					for pos in component:
+						team_tile_map_layer.set_cell(pos, 1, Vector2i(4, 2)) # 友方
+				Globals.Team.Enemy:
+					for pos in component:
+						team_tile_map_layer.set_cell(pos, 1, Vector2i(4, 0)) # 敌方
+				_:
+					push_error(Globals.pos_to_module[component[0]], "的 team 不在 globals 里")	
 
 func _create_enemy(enemy_size: int) -> void:
 	# 初始化所有可能的位置
 	var all_possible_positions: Array[Vector2i] = []
-	for x in range(Globals.map_size):
-		for y in range(Globals.map_size):
+	for x in range(Globals.map_size_x):
+		for y in range(Globals.map_size_y):
 			var pos = Vector2i(x, y)
 			if not Globals.pos_to_module.has(pos):
 				all_possible_positions.append(pos)
@@ -427,8 +416,8 @@ func _create_enemy(enemy_size: int) -> void:
 		available_count += 1
 		
 		for next_pos in get_neighbors(current):
-			if (next_pos.x >= 0 and next_pos.x < Globals.map_size and 
-				next_pos.y >= 0 and next_pos.y < Globals.map_size and 
+			if (next_pos.x >= 0 and next_pos.x < Globals.map_size_x and 
+				next_pos.y >= 0 and next_pos.y < Globals.map_size_y and 
 				not Globals.pos_to_module.has(next_pos) and
 				not visited.has(next_pos)):
 					queue.push_back(next_pos)
@@ -446,8 +435,8 @@ func _create_enemy(enemy_size: int) -> void:
 		var valid_neighbors: Array[Vector2i] = []
 		
 		for n in neighbors:
-			if (n.x >= 0 and n.x < Globals.map_size and 
-				n.y >= 0 and n.y < Globals.map_size and 
+			if (n.x >= 0 and n.x < Globals.map_size_x and 
+				n.y >= 0 and n.y < Globals.map_size_y and 
 				not Globals.pos_to_module.has(n) and
 				not positions.has(n)):
 					valid_neighbors.append(n)

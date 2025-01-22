@@ -2,8 +2,13 @@ extends Node
 
 var is_picking: bool = false # 该变量表示玩家是否抓着什么东西, 如果抓着就不能买东西了
 
-var map_size: int = 12
+var map_size_x: int = 40
+var map_size_y: int = 30
 var money: int = 20
+var camera_x_min = 0
+var camera_x_max = 40 * 64
+var camera_y_min = 0
+var camera_y_max = 30 * 64
 
 # 多写几遍重复内容就能实现 "加权" 了
 var all_possible_shop_item_paths: Array[PackedScene] = [
