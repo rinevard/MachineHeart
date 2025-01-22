@@ -2,7 +2,8 @@ extends Control
 
 signal item_bought(item: PackedScene)
 
-@onready var refresh_button: Button = $CenterContainer/HBoxContainer/RefreshButton
+@onready var money_label = $CenterContainer/HBoxContainer/VBoxContainer/MoneyLabel
+@onready var refresh_button = $CenterContainer/HBoxContainer/VBoxContainer/RefreshButton
 
 @onready var shop_item_1: ShopItemButton = $CenterContainer/HBoxContainer/ShopItem1
 @onready var shop_item_2: ShopItemButton = $CenterContainer/HBoxContainer/ShopItem2
@@ -18,7 +19,11 @@ func _ready():
 	for shop_item: ShopItemButton in shop_items:
 		shop_item.item_bought.connect(_on_item_bought)
 
+func _process(delta):
+	money_label.text = str(Globals.money)
+
 func _on_refresh_button_pressed():
+	Globals.money -= 1
 	for shop_item: ShopItemButton in shop_items:
 		shop_item.refresh()
 

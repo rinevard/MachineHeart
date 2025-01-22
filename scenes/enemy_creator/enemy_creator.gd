@@ -11,7 +11,7 @@ signal successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, prior
 
 ## 生成一个合适的敌人来占满 positions 
 func create_enemy(positions: Array[Vector2i]):
-	if positions.is_empty() or Globals.all_possible_part_paths.is_empty():
+	if positions.is_empty() or Globals.all_possible_enemy_part_paths.is_empty():
 		return
 		
 	# 计算所有位置的中点
@@ -33,5 +33,5 @@ func create_enemy(positions: Array[Vector2i]):
 	for pos in positions:
 		if pos == mid_pos:
 			continue
-		var random_scene_path = Globals.all_possible_part_paths.pick_random()
+		var random_scene_path = Globals.all_possible_enemy_part_paths.pick_random()
 		successfully_put.emit(random_scene_path, pos, Globals.Team.Enemy, false)

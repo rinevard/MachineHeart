@@ -1,15 +1,18 @@
-class_name Bullet
+class_name SwordArc
 extends Area2D
 
 var energy: int = 1
-var speed = 300
 var direction = Vector2(1, 0)
 var team = Globals.Team.Neutral
 
-func _physics_process(delta):
-	position += delta * speed * direction.normalized()
+var rest_live_time: float = 0.5
 
-func init_bullet(new_energy: int, dir: Vector2, new_team):
+func _process(delta):
+	rest_live_time -= delta
+	if rest_live_time <= 0:
+		call_deferred("queue_free")
+
+func init_sword_arc(new_energy: int, dir: Vector2, new_team):
 	energy = new_energy
 	direction = dir.normalized()
 	rotation = dir.angle()
@@ -39,5 +42,4 @@ func _update_collision_mask() -> void:
 
 func _on_area_entered(area: Area2D):
 	if area.has_method("hurt"):
-		area.hurt(energy)
-	queue_free()
+		area.hurt(2 * energy)

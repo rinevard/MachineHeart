@@ -131,20 +131,6 @@ func activate_nodes(component: Array) -> void:
 				if scene.has_method("activate"):
 					scene.activate(energy_dir[0], energy_dir[1])
 
-	# 打印激活信息（用于测试）
-	#print("\n-------------------\n", activate_parts, "\n-------------------\n")
-	#print("Activation layers:")
-	#for i in range(activate_parts.size()):
-		#print("Layer ", i + 1, ":")
-		#for pos in activate_parts[i]:
-			#var scene = activate_parts[i][pos][0]
-			#var energies_dirs = activate_parts[i][pos][1]
-			#print("\tPosition: ", pos, " Scene: ", scene)
-			#for energy_dir in energies_dirs:
-				#if scene.has_method("activate"):
-					#scene.activate(energy_dir[0], energy_dir[1])
-				#print("\t\tEnergy: ", energy_dir[0], " Shooting Direction: ", Globals.direction_to_string(energy_dir[1]))
-
 # 判断pos处是否有module且是core
 func _is_core(pos: Vector2i) -> bool:
 	return Globals.pos_to_module.has(pos) and Globals.pos_to_module[pos].type == Globals.MachineType.Core
@@ -265,7 +251,7 @@ func _on_successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, pri
 			components.append([pos])
 			pos_to_component_idx[pos] = components.size() - 1
 			_merge_component(components.size() - 1, prioritize_friend)
-			
+
 		Globals.MachineType.Part:
 			components.append([null, pos])
 			pos_to_component_idx[pos] = components.size() - 1
@@ -281,8 +267,6 @@ func _on_successfully_delete(pos: Vector2i, prioritize_friend: bool) -> void:
 	var was_core = _is_core(pos)
 	var removed_scene: Node2D = Globals.pos_to_module[pos]
 	removed_scene.visible = false
-	print("该场景被visible false: ", removed_scene)
-	print("该场景被queue free: ", removed_scene)
 	removed_scene.call_deferred("queue_free")
 	
 	# 从映射中移除
@@ -382,8 +366,6 @@ func _update_info_after_components_changed() -> void:
 		var core_team = Globals.Team.Neutral if component[0] == null else Globals.pos_to_module[component[0]].team
 		for j in range(1, component.size()):
 			Globals.pos_to_module[component[j]].team = core_team
-		
-	print("components: \n", components, "\n")
 	
 	# TODO
 	# === 以下是新增的可视化代码 ===

@@ -14,10 +14,6 @@ signal successfully_delete(pos: Vector2i, prioritize_friend: bool)
 var cursor_tile: Vector2i = Vector2i(-99, -99)
 var selected_item: PackedScene = null
 
-const BLUE_CORE = preload("res://scenes/machine_elements/blue_core.tscn")
-const PURPLE_PART = preload("res://scenes/machine_elements/purple_part.tscn")
-const BLACK_CORE = preload("res://scenes/machine_elements/black_core.tscn")
-
 func _process(_delta):
 	# 悬停高亮
 	cursor_tile = get_mouse_tilepos()
@@ -32,10 +28,10 @@ func _unhandled_input(event):
 		selected_item = null
 		update_highlight_tile()
 		Globals.is_picking = false
-	# 右键删除
+	# 右键卖出
 	if event.is_action_pressed("right_click") and \
 	Globals.pos_to_module.has(cursor_tile):
-		delete_obj_mousepos()
+		sell_obj_mousepos()
 
 func update_highlight_tile() -> void:
 	highlight_tile_map_layer.clear()
@@ -49,17 +45,19 @@ func place_obj_mousepos(scene_path: PackedScene):
 	# 手动放置的队伍为友方
 	successfully_put.emit(scene_path, mouse_tile_pos, Globals.Team.Friend, true)
 
-func delete_obj_mousepos():
+func sell_obj_mousepos():
 	var mouse_tile_pos: Vector2i = get_mouse_tilepos()
 	if not Globals.pos_to_module.has(mouse_tile_pos):
 		return
 	var module: Node2D = Globals.pos_to_module[mouse_tile_pos]
 	assert(module.get("team") != null, "module 没有阵营!")
 	assert(module.get("type") != null, "module 没有 machine_type!")
+	assert(module.get("sold") != null, "module 没有 卖出价格!")
 	# 只能删除友方零件, 不能删除核心或是别的阵营的东西
 	if module.team != Globals.Team.Friend or module.type == Globals.MachineType.Core:
 		return
 	# 删除以后优先和友方合并
+	Globals.money += module.sold
 	successfully_delete.emit(mouse_tile_pos, true)
 
 func get_mouse_tilepos() -> Vector2i:

@@ -8,6 +8,8 @@ var team = Globals.Team.Neutral:
 		team = value
 		call_deferred("_update_collision_layer")
 var type = Globals.MachineType.Part
+@export var cost: int = -1
+@export var sold: int = -1
 @export var default_health: int = -1
 @export var default_armor: int = -1
 
@@ -15,6 +17,7 @@ var tile_pos: Vector2i = Vector2i.ZERO
 var has_died: bool = false
 var health: int
 var armor: int
+var active_protections: Array[ProtectCircle] = []
 
 func _ready():
 	health = default_health
@@ -23,7 +26,23 @@ func _ready():
 func init_module(pos: Vector2i) -> void:
 	tile_pos = pos
 
+func add_protection(protector: ProtectCircle):
+	if not active_protections.has(protector):
+		active_protections.append(protector)
+
+func remove_protection(protector: ProtectCircle):
+	active_protections.erase(protector)
+
+# 判断是否处于保护状态
+func is_protected() -> bool:
+	# 清理已失效的保护者
+	active_protections = active_protections.filter(func(p): return is_instance_valid(p))
+	return active_protections.size() > 0
+
 func hurt(amount: int):
+	# 如果 protector 非空, 说明正在被保护, 不受伤害
+	if is_protected():
+		return
 	if armor > 0:
 		armor -= amount
 	else:

@@ -1,0 +1,37 @@
+[gd_scene load_steps=3 format=3 uid="uid://taxwpuaek7dr"]
+
+[ext_resource type="Script" path="res://scenes/sword_arc/sword_arc.gd" id="1_mun75"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_44l8t"]
+size = Vector2(60, 60)
+
+[node name="SwordArc" type="Area2D"]
+scale = Vector2(2.5, 2.5)
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_mun75")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(0, 45, 55, 45, 115, 0, 58, -38, 0, -40)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(31, 4)
+scale = Vector2(1, 1.36667)
+texture = SubResource("PlaceholderTexture2D_44l8t")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+position = Vector2(68, 1)
+scale = Vector2(1, 0.45)
+texture = SubResource("PlaceholderTexture2D_44l8t")
+
+[node name="Sprite2D3" type="Sprite2D" parent="."]
+position = Vector2(51, -13)
+scale = Vector2(1, 0.45)
+texture = SubResource("PlaceholderTexture2D_44l8t")
+
+[node name="Sprite2D4" type="Sprite2D" parent="."]
+position = Vector2(48, 17)
+scale = Vector2(1, 0.45)
+texture = SubResource("PlaceholderTexture2D_44l8t")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

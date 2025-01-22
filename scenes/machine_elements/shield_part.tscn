@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://dtk28h2jeyd8l"]
+
+[ext_resource type="Texture2D" uid="uid://bnhshj0vjdgpb" path="res://assets/art/shield.png" id="1_2tkxn"]
+[ext_resource type="Script" path="res://scenes/machine_elements/shield_part.gd" id="1_48uj2"]
+[ext_resource type="PackedScene" uid="uid://2g547fehw3j8" path="res://scenes/protect_circle/protect_circle.tscn" id="3_u8dro"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_iw67b"]
+radius = 60.0
+
+[node name="ShieldPart" type="Area2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_48uj2")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_2tkxn")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_iw67b")
+
+[node name="ProtectCircle" parent="." instance=ExtResource("3_u8dro")]
+visible = false

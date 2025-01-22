@@ -3,25 +3,31 @@ extends Node
 var is_picking: bool = false # 该变量表示玩家是否抓着什么东西, 如果抓着就不能买东西了
 
 var map_size: int = 12
+var money: int = 20
 
 # 多写几遍重复内容就能实现 "加权" 了
-var all_possible_item_paths: Array[PackedScene] = [
+var all_possible_shop_item_paths: Array[PackedScene] = [
 preload("res://scenes/machine_elements/blue_core.tscn"),
-preload("res://scenes/machine_elements/purple_part.tscn")
+preload("res://scenes/machine_elements/gun_part.tscn"),
+preload("res://scenes/machine_elements/money_part.tscn"), 
+preload("res://scenes/machine_elements/sword_part.tscn"), 
+preload("res://scenes/machine_elements/shield_part.tscn")
 ]
-var all_possible_part_paths: Array[PackedScene] = [
-preload("res://scenes/machine_elements/purple_part.tscn")
+var all_possible_enemy_part_paths: Array[PackedScene] = [
+preload("res://scenes/machine_elements/gun_part.tscn"),
+preload("res://scenes/machine_elements/sword_part.tscn"), 
+preload("res://scenes/machine_elements/shield_part.tscn")
 ]
 var enemy_core_path: PackedScene = preload("res://scenes/machine_elements/black_core.tscn")
 
 enum Team {Friend, Enemy, Neutral}
 enum MachineType {Core, Part, Undefined}
 enum HexDirection {
-	RIGHT = 0,    # 向右射击
-	LEFT = 1,     # 向左射击
+	UP_RIGHT = 0,      # 向右上射击
+	RIGHT = 1,    # 向右射击
 	DOWN_RIGHT = 2,    # 向右下射击
 	DOWN_LEFT = 3,     # 向左下射击
-	UP_RIGHT = 4,      # 向右上射击
+	LEFT = 4,     # 向左射击
 	UP_LEFT = 5,       # 向左上射击
 }
 

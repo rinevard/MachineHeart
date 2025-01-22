@@ -39,6 +39,16 @@ layout_mode = 2
 [node name="ShopItem4" parent="CenterContainer/HBoxContainer" instance=ExtResource("1_epao8")]
 layout_mode = 2
 
-[node name="RefreshButton" type="Button" parent="CenterContainer/HBoxContainer"]
-custom_minimum_size = Vector2(200, 200)
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="MoneyLabel" type="Label" parent="CenterContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RefreshButton" type="Button" parent="CenterContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 140)
 layout_mode = 2
