@@ -1,3 +1,4 @@
+class_name Shop
 extends Control
 
 signal item_bought(item: PackedScene)
@@ -26,6 +27,9 @@ func _on_refresh_button_pressed():
 	if Globals.money <= 1:
 		return
 	Globals.money -= 1
+	refresh()
+
+func refresh():
 	for shop_item: ShopItemButton in shop_items:
 		shop_item.refresh()
 

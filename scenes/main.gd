@@ -2,6 +2,7 @@ extends Node2D
 @onready var background_tile_map_layer: TileMapLayer = $BackgroundTileMapLayer
 @onready var team_tile_map_layer = $TeamTileMapLayer
 @onready var turn_handler = $ShopCanvasLayer/TurnHandler
+@onready var shop: Shop = $ShopCanvasLayer/Shop
 
 @onready var mouse_handler: MouseHandler = $MouseHandler
 @onready var enemy_creator: EnemyCreator = $EnemyCreator
@@ -13,6 +14,8 @@ var components: Array = []
 var pos_to_component_idx: Dictionary = {}
 # Globals.pos_to_module
 var cur_turn: int = 0
+var cur_activating_cnt: int = 0 # 对当前正在被激活的机械进行计数. 我们希望所有机械都被激活后才可以进入下一回合, 即该值为 0 时允许进入下一回合
+var turn_able_to_end: bool = true
 
 func _ready():
 	turn_handler.turn_ended.connect(_on_turn_ended)
@@ -23,14 +26,24 @@ func _ready():
 	_create_enemy(5)
 	#------------test---------------
 
+func _process(delta):
+	if cur_activating_cnt == 0:
+		turn_able_to_end = true
+		turn_handler.show()
+	else:
+		turn_able_to_end = false
+		turn_handler.hide()
+
 func _on_turn_ended():
+	if not turn_able_to_end:
+		return
 	#------------test---------------
 	cur_turn += 1
 	if (cur_turn > 2):
 		_create_enemy(randi_range(4, 10))
 		cur_turn = 0
 	#------------test---------------
-	
+	shop.refresh()
 	for component in components:
 		activate_nodes(component)
 
@@ -70,17 +83,20 @@ func _get_direction(from_pos: Vector2i, to_pos: Vector2i) -> int:
 
 # 计算组件中各个部分的激活顺序和能量传递
 func activate_nodes(component: Array) -> void:
+	cur_activating_cnt += 1
 	if component.is_empty() or component[0] == null:
 		return
 	
 	var core_pos = component[0]
-	# activate_parts 里
-	# 每个元素形如 {pos: [scene, [[energy1, dir1], [energy2, dir2], ...]}
-	var activate_parts = []
+	# activate_parts_in_layer_order 里分为由核心到外边的若干个layer
+	# 每个layer是一个列表, 
+	# layer 里每个元素形如 {pos: [scene, [[energy1, dir1], [energy2, dir2], ...]}
+	var activate_parts_in_layer_order = []
 	var visited = {core_pos: true}
 	var cur_layer = {core_pos: [[1.0, -1]]}  # core的方向标记为-1
 	
 	while not cur_layer.is_empty():
+		var activate_parts = []
 		var next_layer = {}
 		var current_layer_info = {}
 		
@@ -122,15 +138,19 @@ func activate_nodes(component: Array) -> void:
 			# 只保留一个合并后的能量值，方向使用第一个能量的方向
 			merged_next_layer[pos] = [[total_energy, next_layer[pos][0][1]]]
 		cur_layer = merged_next_layer
+		activate_parts_in_layer_order.append(activate_parts)
 
 	# 按顺序激活零件
-	for i in range(activate_parts.size()):
-		for pos in activate_parts[i]:
-			var scene = activate_parts[i][pos][0]
-			var energies_dirs = activate_parts[i][pos][1]
-			for energy_dir in energies_dirs:
-				if scene.has_method("activate"):
-					scene.activate(energy_dir[0], energy_dir[1])
+	for activate_parts in activate_parts_in_layer_order:
+		for i in range(activate_parts.size()):
+			for pos in activate_parts[i]:
+				var scene = activate_parts[i][pos][0]
+				var energies_dirs = activate_parts[i][pos][1]
+				for energy_dir in energies_dirs:
+					if scene.has_method("activate"):
+						scene.activate(energy_dir[0], energy_dir[1])
+		await get_tree().create_timer(0.5).timeout
+	cur_activating_cnt -= 1
 
 # 判断pos处是否有module且是core
 func _is_core(pos: Vector2i) -> bool:
