@@ -31,6 +31,6 @@ tile_set = ExtResource("1_5fgrd")
 [node name="EnemyCreator" parent="." instance=ExtResource("6_3kirc")]
 
 [node name="MovingCamera" parent="." instance=ExtResource("7_ca34o")]
-offset = Vector2(2000, 1000)
+metadata/_edit_lock_ = true
 
 [connection signal="item_bought" from="ShopCanvasLayer/Shop" to="MouseHandler" method="_on_shop_item_bought"]

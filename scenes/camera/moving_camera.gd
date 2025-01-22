@@ -10,35 +10,21 @@ var target_position: Vector2 = Vector2.ZERO  # 目标位置
 var target_zoom: Vector2 = Vector2.ONE      # 目标缩放值
 
 func _ready() -> void:
+	limit_left = Globals.camera_x_min
+	limit_top = Globals.camera_y_min
+	limit_right = Globals.camera_x_max
+	limit_bottom = Globals.camera_y_max
 	target_position = position
 	target_zoom = zoom
 
 func _process(delta: float) -> void:
-	var movement = Vector2.ZERO
-	
-	# 检测输入
-	if Input.is_action_pressed("right"):
-		movement.x += 1
-	if Input.is_action_pressed("left"):
-		movement.x -= 1
-	if Input.is_action_pressed("up"):
-		movement.y -= 1
-	if Input.is_action_pressed("down"):
-		movement.y += 1
-		
-	# 标准化向量
-	if movement.length() > 0:
-		movement = movement.normalized()
+	var direction: Vector2 = Input.get_vector("left", "right", "up", "down")
 	
 	# 更新目标位置
-	target_position += movement * move_speed * delta
-	
-	# 限制移动范围
-	target_position.x = clamp(target_position.x, Globals.camera_x_min, Globals.camera_x_max)
-	target_position.y = clamp(target_position.y, Globals.camera_y_min, Globals.camera_y_max)
-	
-	# 平滑移动和缩放
-	position = position.lerp(target_position, delta * smoothness)
+	position = position + direction * move_speed * delta
+	position.x = clamp(position.x, limit_left + 1024, limit_right - 1024)
+	position.y = clamp(position.y, limit_top + 1024, limit_bottom - 1024)
+
 	zoom = zoom.lerp(target_zoom, delta * smoothness)
 
 func _unhandled_input(event: InputEvent) -> void:

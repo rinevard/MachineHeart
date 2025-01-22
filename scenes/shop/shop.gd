@@ -23,6 +23,8 @@ func _process(delta):
 	money_label.text = str(Globals.money)
 
 func _on_refresh_button_pressed():
+	if Globals.money <= 1:
+		return
 	Globals.money -= 1
 	for shop_item: ShopItemButton in shop_items:
 		shop_item.refresh()
