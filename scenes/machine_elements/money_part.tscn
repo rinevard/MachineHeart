@@ -7,6 +7,8 @@
 radius = 60.0
 
 [node name="MoneyPart" type="Area2D"]
+collision_layer = 8
+collision_mask = 0
 script = ExtResource("1_jxe7n")
 cost = 3
 sold = 1

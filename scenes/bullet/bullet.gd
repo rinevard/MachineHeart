@@ -2,12 +2,14 @@ class_name Bullet
 extends Area2D
 
 var energy: int = 1
-var speed = 300
+var speed = 4400
 var direction = Vector2(1, 0)
 var team = Globals.Team.Neutral
 
 func _physics_process(delta):
 	position += delta * speed * direction.normalized()
+	if global_position.x > 6000 or global_position.x < -1000 or global_position.y > 6000 or global_position.y < -1000:
+		call_deferred("queue_free")
 
 func init_bullet(new_energy: int, dir: Vector2, new_team):
 	energy = new_energy
@@ -40,4 +42,4 @@ func _update_collision_mask() -> void:
 func _on_area_entered(area: Area2D):
 	if area.has_method("hurt"):
 		area.hurt(energy)
-	queue_free()
+		call_deferred("queue_free")

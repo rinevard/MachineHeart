@@ -29,9 +29,14 @@ func create_enemy(positions: Array[Vector2i]):
 	# 在中点位置放置core
 	successfully_put.emit(Globals.enemy_core_path, mid_pos, Globals.Team.Enemy, false)
 	
+	await get_tree().create_timer(randf_range(0.3, 0.6)).timeout
 	# 在其他位置随机放置部件
 	for pos in positions:
 		if pos == mid_pos:
 			continue
-		var random_scene_path = Globals.all_possible_enemy_part_paths.pick_random()
-		successfully_put.emit(random_scene_path, pos, Globals.Team.Enemy, false)
+		place_random_part_at_pos(pos)
+
+func place_random_part_at_pos(pos: Vector2i):
+	await get_tree().create_timer(randf_range(0.1, 0.5)).timeout
+	var random_scene_path = Globals.all_possible_enemy_part_paths.pick_random()
+	successfully_put.emit(random_scene_path, pos, Globals.Team.Enemy, false)

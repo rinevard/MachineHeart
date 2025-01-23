@@ -1,6 +1,8 @@
 class_name MachineCore	
 extends Area2D
 
+const EXPLODE_PARTICLE = preload("res://scenes/particles/explode_particle.tscn")
+
 signal died(tile_pos: Vector2i, prioritize_friend: bool)
 
 var team = Globals.Team.Neutral:
@@ -48,6 +50,19 @@ func hurt(amount: int):
 		armor -= amount
 	else:
 		health -= amount
+		
+	# 添加摇晃效果
+	var sprite = $Sprite2D
+	var tween = create_tween()
+	# 连续执行2次小幅度的来回摇晃
+	for i in range(2):
+		# 向左旋转
+		tween.tween_property(sprite, "rotation_degrees", -5.0, 0.05)
+		# 向右旋转
+		tween.tween_property(sprite, "rotation_degrees", 5.0, 0.05)
+	# 最后回到原始位置
+	tween.tween_property(sprite, "rotation_degrees", 0.0, 0.05)
+	await tween.finished
 	if health <= 0 and not has_died:
 		die()
 
@@ -56,6 +71,13 @@ func die():
 	# 如果是敌方, 则定然是被友方打死的, 因此优先连友方
 	var prioritize_friend: bool = true if team == Globals.Team.Enemy else false
 	died.emit(tile_pos, prioritize_friend)
+	
+	# 在原位置播放爆炸动画
+	var explode_particle: GPUParticles2D = EXPLODE_PARTICLE.instantiate()
+	get_tree().root.add_child(explode_particle)
+	explode_particle.one_shot = true
+	explode_particle.emitting = true
+	explode_particle.global_position = global_position
 
 func _update_collision_layer() -> void:
 	# 首先清除所有相关层

@@ -5,6 +5,8 @@ signal item_bought(item: PackedScene)
 
 @onready var money_label = $CenterContainer/HBoxContainer/VBoxContainer/MoneyLabel
 @onready var refresh_button = $CenterContainer/HBoxContainer/VBoxContainer/RefreshButton
+@onready var buy_audio_stream_player: AudioStreamPlayer = $BuyAudioStreamPlayer
+@onready var refresh_audio_stream_player: AudioStreamPlayer = $RefreshAudioStreamPlayer
 
 @onready var shop_item_1: ShopItemButton = $CenterContainer/HBoxContainer/ShopItem1
 @onready var shop_item_2: ShopItemButton = $CenterContainer/HBoxContainer/ShopItem2
@@ -24,10 +26,11 @@ func _process(delta):
 	money_label.text = str(Globals.money)
 
 func _on_refresh_button_pressed():
-	if Globals.money <= 1:
+	if Globals.money <= 0:
 		return
 	Globals.money -= 1
 	refresh()
+	refresh_audio_stream_player.play()
 
 func refresh():
 	for shop_item: ShopItemButton in shop_items:
@@ -35,3 +38,4 @@ func refresh():
 
 func _on_item_bought(item: PackedScene):
 	item_bought.emit(item)
+	buy_audio_stream_player.play()

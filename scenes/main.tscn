@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=4 uid="uid://cwiectn7r5abn"]
+[gd_scene load_steps=9 format=4 uid="uid://cwiectn7r5abn"]
 
 [ext_resource type="TileSet" uid="uid://b4f0qe47jrvty" path="res://resources/hexa_tiles.tres" id="1_5fgrd"]
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_m83rm"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dk43158ti5kq2" path="res://scenes/shop/shop.tscn" id="5_3cip6"]
 [ext_resource type="PackedScene" uid="uid://tr36rhnfjnpr" path="res://scenes/enemy_creator/enemy_creator.tscn" id="6_3kirc"]
 [ext_resource type="PackedScene" uid="uid://crsy2sb5aalc3" path="res://scenes/camera/moving_camera.tscn" id="7_ca34o"]
+[ext_resource type="AudioStream" uid="uid://c8r6me3ytpfy" path="res://assets/sfx/place-100513.mp3" id="8_qpph7"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_m83rm")
@@ -32,5 +33,9 @@ tile_set = ExtResource("1_5fgrd")
 
 [node name="MovingCamera" parent="." instance=ExtResource("7_ca34o")]
 metadata/_edit_lock_ = true
+
+[node name="ChessPlaceAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_qpph7")
+max_polyphony = 16
 
 [connection signal="item_bought" from="ShopCanvasLayer/Shop" to="MouseHandler" method="_on_shop_item_bought"]

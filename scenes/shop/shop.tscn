@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://dk43158ti5kq2"]
+[gd_scene load_steps=5 format=3 uid="uid://dk43158ti5kq2"]
 
 [ext_resource type="Script" path="res://scenes/shop/shop.gd" id="1_cxwj3"]
 [ext_resource type="PackedScene" uid="uid://8qtr1v08wxfm" path="res://scenes/shop/shop_item.tscn" id="1_epao8"]
+[ext_resource type="AudioStream" uid="uid://bp4y1gh3q06pn" path="res://assets/sfx/buy.mp3" id="3_0seam"]
+[ext_resource type="AudioStream" uid="uid://dpgolpgyla4ii" path="res://assets/sfx/refresh.mp3" id="4_m13ed"]
 
 [node name="Shop" type="Control"]
 layout_mode = 3
@@ -52,3 +54,11 @@ vertical_alignment = 1
 [node name="RefreshButton" type="Button" parent="CenterContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(200, 140)
 layout_mode = 2
+
+[node name="BuyAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_0seam")
+max_polyphony = 8
+
+[node name="RefreshAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_m13ed")
+volume_db = -10.0

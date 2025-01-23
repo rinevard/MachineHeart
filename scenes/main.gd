@@ -3,9 +3,13 @@ extends Node2D
 @onready var team_tile_map_layer = $TeamTileMapLayer
 @onready var turn_handler = $ShopCanvasLayer/TurnHandler
 @onready var shop: Shop = $ShopCanvasLayer/Shop
-
+@onready var moving_camera: MovingCamera = $MovingCamera
+@onready var chess_place_audio_stream_player: AudioStreamPlayer = $ChessPlaceAudioStreamPlayer
 @onready var mouse_handler: MouseHandler = $MouseHandler
 @onready var enemy_creator: EnemyCreator = $EnemyCreator
+
+const BLUE_CORE: PackedScene = preload("res://scenes/machine_elements/blue_core.tscn")
+const GUN_PART: PackedScene = preload("res://scenes/machine_elements/gun_part.tscn")
 
 # 以下皆为 tile_pos
 # 连通分量列表，每个元素是[core/null, part1, part2, ...]
@@ -25,6 +29,15 @@ func _ready():
 	#------------test---------------
 	_create_enemy(5)
 	#------------test---------------
+	# 初始化摄像头位置
+	moving_camera.position = Vector2(2560, 1600)
+	await get_tree().create_timer(0.4).timeout
+	moving_camera.target_zoom = Vector2.ONE * moving_camera.min_zoom
+	
+	# 游戏开始时在中间放核心和枪给玩家
+	_on_successfully_put(BLUE_CORE, Vector2i(20, 15), Globals.Team.Friend, true)
+	await get_tree().create_timer(0.4).timeout
+	_on_successfully_put(GUN_PART, Vector2i(21, 15), Globals.Team.Friend, true)
 
 func _process(delta):
 	if cur_activating_cnt == 0:
@@ -83,10 +96,10 @@ func _get_direction(from_pos: Vector2i, to_pos: Vector2i) -> int:
 
 # 计算组件中各个部分的激活顺序和能量传递
 func activate_nodes(component: Array) -> void:
-	cur_activating_cnt += 1
 	if component.is_empty() or component[0] == null:
 		return
 	
+	cur_activating_cnt += 1
 	var core_pos = component[0]
 	# activate_parts_in_layer_order 里分为由核心到外边的若干个layer
 	# 每个layer是一个列表, 
@@ -146,11 +159,17 @@ func activate_nodes(component: Array) -> void:
 			for pos in activate_parts[i]:
 				var scene = activate_parts[i][pos][0]
 				var energies_dirs = activate_parts[i][pos][1]
-				for energy_dir in energies_dirs:
-					if scene.has_method("activate"):
-						scene.activate(energy_dir[0], energy_dir[1])
+				activate_helper(scene, energies_dirs)
 		await get_tree().create_timer(0.5).timeout
 	cur_activating_cnt -= 1
+
+# 实现同一位置多次激活时多次激活的中间间隔
+func activate_helper(scene, energies_dirs):
+	for energy_dir in energies_dirs:
+		if scene != null and is_instance_valid(scene) and \
+			scene.has_method("activate"):
+			scene.activate(energy_dir[0], energy_dir[1])
+			await get_tree().create_timer(0.1).timeout
 
 # 判断pos处是否有module且是core
 func _is_core(pos: Vector2i) -> bool:
@@ -255,8 +274,7 @@ func _on_successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, pri
 	var rel_pos = background_tile_map_layer.map_to_local(pos)
 	var something: Node2D = scene_path.instantiate()
 	add_child(something)
-	something.global_position = background_tile_map_layer.to_global(rel_pos)
-	
+		
 	if something.get("type") == null or something.get("team") == null:
 		push_error("放置了一个没有type或team属性的东西")
 		return
@@ -265,7 +283,26 @@ func _on_successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, pri
 	Globals.pos_to_module[pos] = something
 	something.init_module(pos)
 	something.died.connect(_on_successfully_delete)
+	chess_place_audio_stream_player.play()
 	
+	# 从天上落下的棋子
+	var origin_layer = something.collision_layer
+	var origin_mask = something.collision_mask
+	something.set_collision_layer_value(1, false)
+	something.set_collision_layer_value(2, false)
+	something.set_collision_layer_value(3, false)
+	something.set_collision_layer_value(4, true)
+	something.set_collision_mask_value(1, false)
+	something.set_collision_mask_value(2, false)
+	something.set_collision_mask_value(3, false)
+	var tween = create_tween()
+	var target_global_pos = background_tile_map_layer.to_global(rel_pos)
+	something.global_position = target_global_pos + Vector2(0, -4096)
+	tween.tween_property(something, "global_position", target_global_pos, 0.44).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUINT)
+	await tween.finished
+	if something != null and is_instance_valid(something):
+		something.set("team", something.team)
+
 	match something.type:
 		Globals.MachineType.Core:
 			something.team = core_team

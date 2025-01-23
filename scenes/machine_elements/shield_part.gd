@@ -2,10 +2,13 @@ extends MachinePart
 
 @onready var protect_circle: ProtectCircle = $ProtectCircle
 
+func init_module(pos: Vector2i) -> void:
+	tile_pos = pos
+	protect_circle.init_protect_circle(team)
+
 func activate(energy: int, energy_dir: int):
 	super.activate(energy, energy_dir)
-	protect_circle.init_protect_circle(team)
-	protect_circle.protect_count += 1
+	protect_circle.activate_shield()
 
 func _update_collision_layer() -> void:
 	# 首先清除所有相关层

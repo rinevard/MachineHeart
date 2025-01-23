@@ -1,6 +1,8 @@
 class_name MouseHandler
 extends Node2D
 
+const MONEY_PICKED: PackedScene = preload("res://scenes/money_picked/money_picked.tscn")
+
 # 在地图上放置一个新的节点（core或part）
 # Parameters:
 #   scene_path: PackedScene - 要实例化的场景
@@ -53,12 +55,22 @@ func sell_obj_mousepos():
 	assert(module.get("team") != null, "module 没有阵营!")
 	assert(module.get("type") != null, "module 没有 machine_type!")
 	assert(module.get("sold") != null, "module 没有 卖出价格!")
-	# 只能删除友方零件, 不能删除核心或是别的阵营的东西
-	if module.team != Globals.Team.Friend or module.type == Globals.MachineType.Core:
+	# 只能删除友方
+	if module.team != Globals.Team.Friend:
 		return
 	# 删除以后优先和友方合并
 	Globals.money += module.sold
+	# 金币动画
+	play_gold_animation(mouse_tile_pos, module.sold)
 	successfully_delete.emit(mouse_tile_pos, true)
+
+func play_gold_animation(tile_pos, money: int):
+	for i in range(money):
+		var money_picked = MONEY_PICKED.instantiate()
+		add_child(money_picked)
+		var target_local_pos = highlight_tile_map_layer.map_to_local(tile_pos)
+		money_picked.global_position = highlight_tile_map_layer.to_global(target_local_pos)
+		await get_tree().create_timer(0.1).timeout
 
 func get_mouse_tilepos() -> Vector2i:
 	var mouse_global_pos = get_global_mouse_position()

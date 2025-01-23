@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scenes/camera/moving_camera.gd" id="1_y4doq"]
 
 [node name="MovingCamera" type="Camera2D"]
+zoom = Vector2(0.8, 0.8)
 limit_smoothed = true
 position_smoothing_enabled = true
 script = ExtResource("1_y4doq")

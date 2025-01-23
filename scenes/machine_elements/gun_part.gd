@@ -1,6 +1,7 @@
 extends MachinePart
 
 const BULLET = preload("res://scenes/bullet/bullet.tscn")
+@onready var shot_audio_stream_player: AudioStreamPlayer = $ShotAudioStreamPlayer
 
 func activate(energy: int, energy_dir: int):
 	super.activate(energy, energy_dir)
@@ -16,3 +17,4 @@ func activate(energy: int, energy_dir: int):
 		var new_bullet: Bullet = BULLET.instantiate()
 		new_bullet.init_bullet(energy, Globals.direcToVec(dir), team)
 		add_child(new_bullet)
+	shot_audio_stream_player.play()

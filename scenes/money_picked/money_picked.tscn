@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://pjf0r0wygfvl"]
+
+[ext_resource type="Script" path="res://scenes/money_picked/money_picked.gd" id="1_w2t5a"]
+[ext_resource type="AudioStream" uid="uid://cem0tgo6i01r5" path="res://assets/sfx/get_money.mp3" id="2_jvofp"]
+[ext_resource type="Texture2D" uid="uid://busivmsr055p1" path="res://assets/art/coin.png" id="2_wrlqj"]
+
+[node name="MoneyPicked" type="Node2D"]
+script = ExtResource("1_w2t5a")
+
+[node name="CoinSprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_wrlqj")
+
+[node name="GetMoneyAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_jvofp")
