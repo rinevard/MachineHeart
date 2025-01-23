@@ -14,6 +14,7 @@ script = ExtResource("1_pbulv")
 cost = 8
 sold = 3
 default_health = 8
+effec = "每回合结束时向外传递能量"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(1, 0, 0, 1)

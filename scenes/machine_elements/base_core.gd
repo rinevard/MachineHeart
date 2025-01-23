@@ -15,6 +15,7 @@ var type = Globals.MachineType.Core
 @export var cost: int = -1
 @export var sold: int = -1
 @export var default_health: int = -1
+@export var effec: String = "这里是 core 的默认文字"
 
 var tile_pos: Vector2i = Vector2i.ZERO
 var has_died: bool = false
@@ -120,8 +121,11 @@ func hit_shake(direction: Vector2, shake_dis: float=20.0):
 func screen_shake():
 	need_screen_shake.emit()
 
+func set_module_label():
+	module_label.set_module_label(cost, sold, health, effec)
+
 func _on_mouse_entered():
-	module_label.set_module_label(cost, sold, health, "每回合结束时向外传递能量")
+	set_module_label()
 	module_label.show()
 
 func _on_mouse_exited():

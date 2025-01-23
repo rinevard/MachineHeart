@@ -14,6 +14,7 @@ script = ExtResource("1_uk04f")
 cost = 8
 sold = 3
 default_health = 8
+effec = "每回合结束时向外传递能量"
 metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

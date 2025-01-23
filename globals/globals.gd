@@ -14,10 +14,12 @@ var camera_y_max = 30 * 128 + 256
 var all_possible_shop_item_paths: Array[PackedScene] = [
 preload("res://scenes/machine_elements/blue_core.tscn"),
 preload("res://scenes/machine_elements/gun_part.tscn"),
-preload("res://scenes/machine_elements/gun_part.tscn"),
-preload("res://scenes/machine_elements/gun_part.tscn"),
 preload("res://scenes/machine_elements/money_part.tscn"), 
 preload("res://scenes/machine_elements/sword_part.tscn"), 
+preload("res://scenes/machine_elements/shield_part.tscn"),
+# 重复一遍零件
+preload("res://scenes/machine_elements/gun_part.tscn"),
+preload("res://scenes/machine_elements/money_part.tscn"), 
 preload("res://scenes/machine_elements/sword_part.tscn"), 
 preload("res://scenes/machine_elements/shield_part.tscn")
 ]

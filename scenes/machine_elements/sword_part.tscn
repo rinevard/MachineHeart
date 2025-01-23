@@ -15,6 +15,7 @@ script = ExtResource("1_xvpeg")
 cost = 5
 sold = 1
 default_health = 5
+effec = "接收到能量时，向能量传递方向劈砍，造成 2x 点伤害"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
