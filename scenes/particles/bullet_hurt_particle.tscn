@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://i8uhexicfxqs"]
+
+[ext_resource type="Script" path="res://scenes/particles/bullet_hurt_particle.gd" id="1_pipim"]
+
+[sub_resource type="Curve" id="Curve_36ach"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.472851, 0.190303), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_nii2r"]
+curve = SubResource("Curve_36ach")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wwcwg"]
+particle_flag_disable_z = true
+spread = 60.0
+initial_velocity_min = 700.0
+initial_velocity_max = 1000.0
+gravity = Vector3(0, 0, 0)
+scale_min = 8.0
+scale_max = 16.0
+scale_curve = SubResource("CurveTexture_nii2r")
+color = Color(0.0879628, 0.175917, 0.317254, 1)
+
+[node name="BulletHurtParticle" type="GPUParticles2D"]
+emitting = false
+amount = 20
+process_material = SubResource("ParticleProcessMaterial_wwcwg")
+lifetime = 0.35
+one_shot = true
+script = ExtResource("1_pipim")

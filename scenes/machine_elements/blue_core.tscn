@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://bm8hc42x5t8pq"]
+[gd_scene load_steps=5 format=3 uid="uid://bm8hc42x5t8pq"]
 
 [ext_resource type="Script" path="res://scenes/machine_elements/base_core.gd" id="1_uk04f"]
 [ext_resource type="Texture2D" uid="uid://bgxa68nq7de21" path="res://assets/art/core.png" id="2_higmp"]
+[ext_resource type="PackedScene" uid="uid://ckxswmorfpp0w" path="res://scenes/ui/module_label.tscn" id="3_ixrqi"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n5xyy"]
 radius = 60.0
@@ -12,8 +13,7 @@ collision_mask = 0
 script = ExtResource("1_uk04f")
 cost = 8
 sold = 3
-default_health = 3
-default_armor = 5
+default_health = 8
 metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -22,3 +22,5 @@ texture = ExtResource("2_higmp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_n5xyy")
+
+[node name="ModuleLabel" parent="." instance=ExtResource("3_ixrqi")]

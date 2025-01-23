@@ -3,6 +3,7 @@ extends Area2D
 
 const EXPLODE_PARTICLE = preload("res://scenes/particles/explode_particle.tscn")
 
+@onready var module_label: ModuleLabel = $ModuleLabel
 signal died(tile_pos: Vector2i, prioritize_friend: bool)
 
 var team = Globals.Team.Neutral:
@@ -13,17 +14,17 @@ var type = Globals.MachineType.Part
 @export var cost: int = -1
 @export var sold: int = -1
 @export var default_health: int = -1
-@export var default_armor: int = -1
 
 var tile_pos: Vector2i = Vector2i.ZERO
 var has_died: bool = false
 var health: int
-var armor: int
 var active_protections: Array[ProtectCircle] = []
 
 func _ready():
 	health = default_health
-	armor = default_armor
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
+	module_label.hide()
 
 func init_module(pos: Vector2i) -> void:
 	tile_pos = pos
@@ -45,10 +46,7 @@ func hurt(amount: int):
 	# 如果 protector 非空, 说明正在被保护, 不受伤害
 	if is_protected():
 		return
-	if armor > 0:
-		armor -= amount
-	else:
-		health -= amount
+	health -= amount
 		
 	# 添加摇晃效果
 	var sprite = $Sprite2D
@@ -95,3 +93,33 @@ func _update_collision_layer() -> void:
 
 func activate(energy: int, energy_dir: int):
 	return
+
+func hit_shake(direction: Vector2, shake_dis: float=20.0):
+	# 标准化方向向量
+	var normalized_dir = direction.normalized()
+	# 获取原始位置
+	var original_position = position
+	# 设置震动距离
+	var shake_distance = shake_dis  # 可以调整这个值来改变震动距离
+	
+	# 创建 tween
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_ELASTIC)
+	
+	# 设置震动动画
+	# 首先快速向后移动
+	tween.tween_property(self, "position", 
+		original_position + normalized_dir * shake_distance, 
+		0.1)
+	# 然后弹回原位置
+	tween.tween_property(self, "position", 
+		original_position, 
+		0.3)
+
+func _on_mouse_entered():
+	module_label.set_module_label(cost, sold, health, "每回合结束时被能量激活")
+	module_label.show()
+
+func _on_mouse_exited():
+	module_label.hide()

@@ -19,6 +19,8 @@ var selected_item: PackedScene = null
 func _process(_delta):
 	# 悬停高亮
 	cursor_tile = get_mouse_tilepos()
+	cursor_tile.x = clamp(cursor_tile.x, 0, Globals.map_size_x - 1)
+	cursor_tile.y = clamp(cursor_tile.y, 0, Globals.map_size_y - 1)
 	if selected_item != null:
 		update_highlight_tile()
 
@@ -44,6 +46,8 @@ func update_highlight_tile() -> void:
 
 func place_obj_mousepos(scene_path: PackedScene):
 	var mouse_tile_pos: Vector2i = get_mouse_tilepos()
+	mouse_tile_pos.x = clamp(mouse_tile_pos.x, 0, Globals.map_size_x - 1)
+	mouse_tile_pos.y = clamp(mouse_tile_pos.y, 0, Globals.map_size_y - 1)
 	# 手动放置的队伍为友方
 	successfully_put.emit(scene_path, mouse_tile_pos, Globals.Team.Friend, true)
 

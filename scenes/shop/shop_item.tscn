@@ -6,6 +6,7 @@
 custom_minimum_size = Vector2(200, 200)
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 1
 script = ExtResource("1_h3mym")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]

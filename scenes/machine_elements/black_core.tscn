@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://bj4wfc54xka0q"]
+[gd_scene load_steps=5 format=3 uid="uid://bj4wfc54xka0q"]
 
 [ext_resource type="Script" path="res://scenes/machine_elements/base_core.gd" id="1_pbulv"]
 [ext_resource type="Texture2D" uid="uid://bgxa68nq7de21" path="res://assets/art/core.png" id="2_7gggx"]
+[ext_resource type="PackedScene" uid="uid://ckxswmorfpp0w" path="res://scenes/ui/module_label.tscn" id="3_qbjji"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5tocl"]
 radius = 60.0
@@ -10,8 +11,9 @@ radius = 60.0
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("1_pbulv")
-default_health = 3
-default_armor = 2
+cost = 8
+sold = 3
+default_health = 8
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(1, 0, 0, 1)
@@ -20,3 +22,5 @@ texture = ExtResource("2_7gggx")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_5tocl")
+
+[node name="ModuleLabel" parent="." instance=ExtResource("3_qbjji")]

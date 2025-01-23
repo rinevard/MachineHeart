@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://dtk28h2jeyd8l"]
+[gd_scene load_steps=6 format=3 uid="uid://dtk28h2jeyd8l"]
 
 [ext_resource type="Texture2D" uid="uid://bnhshj0vjdgpb" path="res://assets/art/shield.png" id="1_2tkxn"]
 [ext_resource type="Script" path="res://scenes/machine_elements/shield_part.gd" id="1_48uj2"]
 [ext_resource type="PackedScene" uid="uid://2g547fehw3j8" path="res://scenes/protect_circle/protect_circle.tscn" id="3_u8dro"]
+[ext_resource type="PackedScene" uid="uid://ckxswmorfpp0w" path="res://scenes/ui/module_label.tscn" id="4_xr3ef"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_iw67b"]
 radius = 60.0
@@ -11,10 +12,9 @@ radius = 60.0
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("1_48uj2")
-cost = 3
-sold = 1
-default_health = 1
-default_armor = 1
+cost = 5
+sold = 2
+default_health = 4
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.3, 0.3)
@@ -24,3 +24,5 @@ texture = ExtResource("1_2tkxn")
 shape = SubResource("CircleShape2D_iw67b")
 
 [node name="ProtectCircle" parent="." instance=ExtResource("3_u8dro")]
+
+[node name="ModuleLabel" parent="." instance=ExtResource("4_xr3ef")]

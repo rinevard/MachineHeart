@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://cih0srmlmixrl"]
+[gd_scene load_steps=6 format=3 uid="uid://cih0srmlmixrl"]
 
 [ext_resource type="Script" path="res://scenes/machine_elements/gun_part.gd" id="1_d5xpv"]
 [ext_resource type="Texture2D" uid="uid://cbyq1nwt5dyl" path="res://assets/art/gun.png" id="2_fysn7"]
 [ext_resource type="AudioStream" uid="uid://cffla3bcarlgh" path="res://assets/sfx/gunshot.mp3" id="3_2sttv"]
+[ext_resource type="PackedScene" uid="uid://ckxswmorfpp0w" path="res://scenes/ui/module_label.tscn" id="4_bl11j"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6j1u4"]
 radius = 60.0
@@ -11,10 +12,9 @@ radius = 60.0
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("1_d5xpv")
-cost = 2
+cost = 3
 sold = 1
 default_health = 4
-default_armor = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.3, 0.3)
@@ -27,3 +27,5 @@ shape = SubResource("CircleShape2D_6j1u4")
 stream = ExtResource("3_2sttv")
 volume_db = -15.0
 max_polyphony = 8
+
+[node name="ModuleLabel" parent="." instance=ExtResource("4_bl11j")]

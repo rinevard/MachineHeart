@@ -1,12 +1,10 @@
 [gd_scene load_steps=4 format=3 uid="uid://popovj3lxtrl"]
 
 [ext_resource type="Script" path="res://scenes/bullet/bullet.gd" id="1_64okd"]
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_q1ytd"]
-size = Vector2(80, 20)
+[ext_resource type="Texture2D" uid="uid://cqe1yxxvm32t4" path="res://assets/art/whiteBullet.png" id="2_x1gpg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4wdry"]
-size = Vector2(80, 20)
+size = Vector2(99.1382, 25)
 
 [node name="Bullet" type="Area2D"]
 z_index = 2
@@ -15,10 +13,11 @@ collision_mask = 0
 script = ExtResource("1_64okd")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0, 0, 0, 1)
-texture = SubResource("PlaceholderTexture2D_q1ytd")
+texture = ExtResource("2_x1gpg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.9058, -2)
+scale = Vector2(1.27285, 1.29829)
 shape = SubResource("RectangleShape2D_4wdry")
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]

@@ -9,6 +9,7 @@ func _ready():
 	init_protect_circle(team)
 
 func init_protect_circle(new_team):
+	hide()
 	update_team(new_team)
 
 func update_team(new_team):
@@ -28,6 +29,8 @@ func hurt(amount: int):
 
 func activate_shield():
 	shield_count += 1
+	if shield_count > 3:
+		shield_count = 3
 	if shield_count == 1: # 从无盾到有盾的转换
 		enable_shield_and_protect_team()
 
@@ -48,14 +51,20 @@ func protect_team_in_shield():
 			module.add_protection(self)
 
 func disable_shield_and_clear_protection():
-	hide()
+	# 渐变从透明到不透明
+	var tween = create_tween()
+	tween.tween_property(self, "modulate:a", 0.0, 0.1)
+	tween.finished.connect(hide)
 	set_collision_layer_value(1, false)
 	set_collision_layer_value(2, false)
 	set_collision_layer_value(3, false)
 	remove_protection()
 
 func enable_shield_and_protect_team():
+	# 渐变从不透明到透明
 	show()
+	var tween = create_tween()
+	tween.tween_property(self, "modulate:a", 1.0, 0.1)
 	_update_collision_layer()
 	protect_team_in_shield()
 
@@ -75,15 +84,12 @@ func _update_collision_layer() -> void:
 
 # 当模块进入保护范围
 func _on_detect_area_area_entered(area: Area2D):
-	print("area entered shield!")
-
 	if not area.has_method("init_module"):
 		return
 	_remove_invalid_module()
 	modules_in_shield.append(area)
 	if is_instance_valid(area) and area.team == team:
 		area.add_protection(self)
-	print(modules_in_shield)
 
 # 当模块离开保护范围
 func _on_detect_area_area_exited(area: Area2D):
@@ -92,8 +98,6 @@ func _on_detect_area_area_exited(area: Area2D):
 	_remove_invalid_module()
 	modules_in_shield.erase(area)
 	area.remove_protection(self)
-	print("area exit shield!")
-	print(modules_in_shield)
 
 # 当防护罩被移除时（比如被售出）
 func _exit_tree():

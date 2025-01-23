@@ -283,6 +283,8 @@ func _on_successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, pri
 	Globals.pos_to_module[pos] = something
 	something.init_module(pos)
 	something.died.connect(_on_successfully_delete)
+	if something.type == Globals.MachineType.Core:
+		something.need_screen_shake.connect(moving_camera.screen_shake)
 	chess_place_audio_stream_player.play()
 	
 	# 从天上落下的棋子

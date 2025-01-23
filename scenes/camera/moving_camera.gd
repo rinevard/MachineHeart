@@ -8,6 +8,10 @@ extends Camera2D
 @export var zoom_speed: float = 0.05     # 缩放速度
 
 var target_zoom: Vector2 = Vector2.ONE      # 目标缩放值
+var default_shake_strength: float = 20.0 # 屏幕震动强度
+var shake_strength: float = 0.0
+var shake_fade: float = 10.0
+var rng = RandomNumberGenerator.new()
 
 func _ready() -> void:
 	limit_left = Globals.camera_x_min
@@ -25,7 +29,10 @@ func _process(delta: float) -> void:
 	position.y = clamp(position.y, limit_top + 1024, limit_bottom - 1024)
 
 	zoom = zoom.lerp(target_zoom, delta * smoothness)
-
+	
+	if shake_strength > 0:
+		shake_strength = lerpf(shake_strength, 0, shake_fade * delta)
+		offset = random_offset()
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
@@ -34,3 +41,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			# 缩小
 			target_zoom = (target_zoom - Vector2.ONE * zoom_speed).clamp(Vector2.ONE * min_zoom, Vector2.ONE * max_zoom)
+
+func screen_shake():
+	shake_strength = default_shake_strength
+
+func random_offset() -> Vector2:
+	return Vector2(rng.randf_range(-shake_strength, shake_strength), rng.randf_range(-shake_strength, shake_strength))

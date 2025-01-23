@@ -21,6 +21,12 @@ func init_sword_arc(new_energy: int, dir: Vector2, new_team):
 func update_team(new_team):
 	team = new_team
 	call_deferred("_update_collision_mask")
+	if team == Globals.Team.Friend:
+		modulate = Color.SKY_BLUE
+		modulate.a = 0.7
+	elif team == Globals.Team.Enemy:
+		modulate = Color.FIREBRICK
+		modulate.a = 0.7
 	return
 
 func _update_collision_mask() -> void:
@@ -43,3 +49,5 @@ func _update_collision_mask() -> void:
 func _on_area_entered(area: Area2D):
 	if area.has_method("hurt"):
 		area.hurt(2 * energy)
+	if area.has_method("hit_shake"):
+		area.hit_shake(direction)

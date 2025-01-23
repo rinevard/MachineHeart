@@ -4,10 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://dh641occ2rkve" path="res://assets/art/blue-circle.svg" id="1_tgbxm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_a4tvl"]
-radius = 210.0
+radius = 219.002
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gq2ei"]
-radius = 210.0
+radius = 115.0
 
 [node name="ProtectCircle" type="Area2D"]
 z_index = 4
@@ -17,7 +17,7 @@ script = ExtResource("1_6hyn6")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 self_modulate = Color(1, 1, 1, 0.341176)
-scale = Vector2(0.7, 0.7)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("1_tgbxm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
