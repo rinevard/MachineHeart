@@ -8,7 +8,8 @@ func init_module(pos: Vector2i) -> void:
 
 func activate(energy: int, energy_dir: int):
 	super.activate(energy, energy_dir)
-	protect_circle.activate_shield()
+	for i in range(energy):
+		protect_circle.activate_shield()
 
 func _update_collision_layer() -> void:
 	# 首先清除所有相关层

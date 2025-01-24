@@ -15,7 +15,7 @@ script = ExtResource("1_48uj2")
 cost = 5
 sold = 2
 default_health = 4
-effec = "接收到能量时，生成能抵抗一次伤害的防护罩保护相邻零件，最多叠加三个。"
+effec = "接收到能量时，生成能抵抗一次伤害的防护罩保护相邻零件，生成x次。防护罩最多叠加4个。"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.3, 0.3)

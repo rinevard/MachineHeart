@@ -29,8 +29,8 @@ func hurt(amount: int):
 
 func activate_shield():
 	shield_count += 1
-	if shield_count > 3:
-		shield_count = 3
+	if shield_count > 4:
+		shield_count = 4
 	if shield_count == 1: # 从无盾到有盾的转换
 		enable_shield_and_protect_team()
 

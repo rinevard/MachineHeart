@@ -1,4 +1,5 @@
 extends Node2D
+
 @onready var background_tile_map_layer: TileMapLayer = $BackgroundTileMapLayer
 @onready var team_tile_map_layer = $TeamTileMapLayer
 @onready var turn_handler = $ShopCanvasLayer/TurnHandler
@@ -18,7 +19,12 @@ var components: Array = []
 var pos_to_component_idx: Dictionary = {}
 # Globals.pos_to_module
 var cur_turn: int = 0
-var cur_activating_cnt: int = 0 # 对当前正在被激活的机械进行计数. 我们希望所有机械都被激活后才可以进入下一回合, 即该值为 0 时允许进入下一回合
+var cur_activating_cnt: int = 0: # 对当前正在被激活的机械进行计数. 我们希望所有机械都被激活后才可以进入下一回合, 即该值为 0 时允许进入下一回合
+	set(value):
+		cur_activating_cnt = value
+		if cur_activating_cnt == 0:
+			detect_game_end()
+
 var turn_able_to_end: bool = true
 
 func _ready():
@@ -26,9 +32,6 @@ func _ready():
 	mouse_handler.successfully_put.connect(_on_successfully_put)
 	enemy_creator.successfully_put.connect(_on_successfully_put)
 	mouse_handler.successfully_delete.connect(_on_successfully_delete)
-	#------------test---------------
-	_create_enemy(5)
-	#------------test---------------
 	# 初始化摄像头位置
 	moving_camera.position = Vector2(2560, 1600)
 	await get_tree().create_timer(0.4).timeout
@@ -38,6 +41,11 @@ func _ready():
 	_on_successfully_put(BLUE_CORE, Vector2i(20, 15), Globals.Team.Friend, true)
 	await get_tree().create_timer(0.4).timeout
 	_on_successfully_put(GUN_PART, Vector2i(21, 15), Globals.Team.Friend, true)
+
+	#------------test---------------
+	_create_enemy(8)
+	_create_enemy(5)
+	#------------test---------------
 
 func _process(delta):
 	if cur_activating_cnt == 0:
@@ -59,6 +67,29 @@ func _on_turn_ended():
 	shop.refresh()
 	for component in components:
 		activate_nodes(component)
+
+func detect_game_end(): # 该函数连接到 after all activated 上, 用于检查游戏是否结束
+	var enemy_cnt: int = 0
+	var friend_cnt: int = 0
+	for component in components:
+		if component[0] == null:
+			continue
+		if Globals.pos_to_module[component[0]].team == Globals.Team.Friend:
+			friend_cnt += 1
+		if Globals.pos_to_module[component[0]].team == Globals.Team.Enemy:
+			enemy_cnt += 1
+	if enemy_cnt == 0:
+		win()
+	elif friend_cnt == 0:
+		lose()
+	print("friend_cnt: ", friend_cnt)
+	print("enemycnt: ", enemy_cnt)
+
+func win():
+	print("win!")
+
+func lose():
+	print("lose!")
 
 # 根据两个位置的相对关系确定方向
 # 返回 Globals.HexDirection 中的一个值
@@ -90,7 +121,7 @@ func _get_direction(from_pos: Vector2i, to_pos: Vector2i) -> int:
 				return Globals.HexDirection.DOWN_RIGHT
 			Vector2i(0, 1):
 				return Globals.HexDirection.DOWN_LEFT
-				
+	
 	push_error("无效的方向！")
 	return -1
 
@@ -270,6 +301,8 @@ func _merge_components(dst_idx: int, src_idx: int) -> void:
 #         core_team - 如果是core，指定其队伍
 #         prioritize_friend - 合并时是否优先合并到友方
 func _on_successfully_put(scene_path: PackedScene, pos: Vector2i, core_team, prioritize_friend: bool) -> void:
+	if Globals.pos_to_module.has(pos):
+		return
 	# 实例化并放置
 	var rel_pos = background_tile_map_layer.map_to_local(pos)
 	var something: Node2D = scene_path.instantiate()

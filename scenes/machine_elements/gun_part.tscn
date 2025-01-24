@@ -14,7 +14,7 @@ collision_mask = 0
 script = ExtResource("1_d5xpv")
 cost = 3
 sold = 1
-default_health = 4
+default_health = 3
 effec = "接收到能量时，向能量传递方向射出三颗子弹，每颗子弹造成 x 点伤害"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

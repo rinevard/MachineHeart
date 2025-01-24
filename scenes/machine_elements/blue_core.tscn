@@ -11,9 +11,9 @@ radius = 60.0
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("1_uk04f")
-cost = 8
+cost = 7
 sold = 3
-default_health = 8
+default_health = 7
 effec = "每回合结束时向外传递能量"
 metadata/_edit_lock_ = true
 
