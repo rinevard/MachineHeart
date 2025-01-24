@@ -14,7 +14,7 @@ script = ExtResource("1_jxe7n")
 cost = 2
 sold = 1
 default_health = 1
-effec = "接收到能量时，售价+1，但售价不超过8"
+effec = "接收到能量时，售价+1，最高不超过8"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.3, 0.3)

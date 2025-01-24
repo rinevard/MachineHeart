@@ -160,7 +160,7 @@ func activate_nodes(component: Array) -> void:
 				var scene = activate_parts[i][pos][0]
 				var energies_dirs = activate_parts[i][pos][1]
 				activate_helper(scene, energies_dirs)
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(0.4).timeout
 	cur_activating_cnt -= 1
 
 # 实现同一位置多次激活时多次激活的中间间隔
