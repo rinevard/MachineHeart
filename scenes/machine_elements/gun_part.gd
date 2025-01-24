@@ -18,4 +18,4 @@ func activate(energy: int, energy_dir: int):
 		new_bullet.init_bullet(energy, Globals.direcToVec(dir), team)
 		add_child(new_bullet)
 	shot_audio_stream_player.play()
-	#hit_shake(Globals.direcToVec((energy_dir + 3) % 6), 4.0)
+	hit_shake(Globals.direcToVec((energy_dir + 3) % 6), 8.0)

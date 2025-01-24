@@ -20,6 +20,7 @@ var tile_pos: Vector2i = Vector2i.ZERO
 var has_died: bool = false
 var health: int
 var active_protections: Array[ProtectCircle] = []
+var is_shaking: bool = false
 
 func _ready():
 	health = default_health
@@ -96,6 +97,9 @@ func activate(energy: int, energy_dir: int):
 	return
 
 func hit_shake(direction: Vector2, shake_dis: float=20.0):
+	if is_shaking:
+		return
+	is_shaking = true
 	# 标准化方向向量
 	var normalized_dir = direction.normalized()
 	# 获取原始位置
@@ -117,6 +121,9 @@ func hit_shake(direction: Vector2, shake_dis: float=20.0):
 	tween.tween_property(self, "position", 
 		original_position, 
 		0.3)
+	
+	await tween.finished
+	is_shaking = false
 
 func set_module_label():
 	module_label.set_module_label(cost, sold, health, effec)

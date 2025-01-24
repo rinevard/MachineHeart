@@ -22,6 +22,7 @@ var has_died: bool = false
 var health: int
 ## 当前提供保护的防护罩列表
 var active_protections: Array[ProtectCircle] = []
+var is_shaking = false
 
 func _ready():
 	health = default_health
@@ -96,6 +97,9 @@ func _update_collision_layer() -> void:
 			set_collision_layer_value(3, true)
 
 func hit_shake(direction: Vector2, shake_dis: float=20.0):
+	if is_shaking:
+		return
+	is_shaking = true
 	# 标准化方向向量
 	var normalized_dir = direction.normalized()
 	# 获取原始位置
@@ -117,6 +121,9 @@ func hit_shake(direction: Vector2, shake_dis: float=20.0):
 	tween.tween_property(self, "position", 
 		original_position, 
 		0.3)
+	
+	await tween.finished
+	is_shaking = false
 
 func screen_shake():
 	need_screen_shake.emit()
