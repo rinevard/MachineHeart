@@ -4,7 +4,7 @@ var is_picking: bool = false # 该变量表示玩家是否抓着什么东西, �
 
 var map_size_x: int = 40
 var map_size_y: int = 30
-var money: int = 25
+var money: int = 80
 var camera_x_min = -1024
 var camera_x_max = 40 * 128 + 256
 var camera_y_min = -1024

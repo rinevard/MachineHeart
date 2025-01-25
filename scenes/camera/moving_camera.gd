@@ -14,6 +14,11 @@ var shake_fade: float = 10.0
 var rng = RandomNumberGenerator.new()
 
 func _ready() -> void:
+	var screen_size = DisplayServer.window_get_size()
+	var width = screen_size.x
+	var height = screen_size.y
+	min_zoom = min_zoom * width / 2880
+	max_zoom = max_zoom * width / 2880
 	limit_left = Globals.camera_x_min
 	limit_top = Globals.camera_y_min
 	limit_right = Globals.camera_x_max

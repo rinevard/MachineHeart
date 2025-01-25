@@ -5,8 +5,22 @@ extends Control
 @onready var instruction_button = $VBoxContainer/CenterContainer/HBoxContainer/VBoxContainer/InstructionButton
 @onready var exit_button = $VBoxContainer/CenterContainer/HBoxContainer/VBoxContainer/ExitButton
 
+@onready var up_place_holder: Control = $VBoxContainer/UpPlaceHolder
+@onready var up_place_holder_2: Control = $VBoxContainer/UpPlaceHolder2
+@onready var left_place_holder: Control = $VBoxContainer/CenterContainer/HBoxContainer/LeftPlaceHolder
+@onready var right_place_holder: Control = $VBoxContainer/CenterContainer/HBoxContainer/RightPlaceHolder
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	var screen_size = DisplayServer.window_get_size()
+	var width = screen_size.x
+	var height = screen_size.y
+	up_place_holder.custom_minimum_size = up_place_holder.custom_minimum_size * width / 2880
+	up_place_holder_2.custom_minimum_size = up_place_holder_2.custom_minimum_size * width / 2880
+	left_place_holder.custom_minimum_size = left_place_holder.custom_minimum_size * width / 2880
+	right_place_holder.custom_minimum_size = right_place_holder.custom_minimum_size * width / 2880
+		
 	start_button.pressed.connect(_on_start_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
 	instruction_button.pressed.connect(_on_instruction_pressed)
@@ -23,6 +37,7 @@ func _on_start_pressed():
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func init_game():
+	Globals.money = 20
 	Globals.pos_to_module = {}
 	Globals.is_picking = false
 

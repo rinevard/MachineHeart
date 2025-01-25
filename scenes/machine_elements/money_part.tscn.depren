@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/machine_elements/money_part.gd" id="1_jxe7n"]
 [ext_resource type="Texture2D" uid="uid://b2dvjvbdemafy" path="res://assets/art/machine_hello_world/小钱灰.png" id="2_rxvjb"]
-[ext_resource type="Texture2D" uid="uid://clayqiex62wu5" path="res://scenes/bullet/machine/few_money.png" id="2_xorjc"]
+[ext_resource type="Texture2D" uid="uid://clayqiex62wu5" path="res://assets/art/machine/few_money.png" id="2_xorjc"]
 [ext_resource type="PackedScene" uid="uid://ckxswmorfpp0w" path="res://scenes/ui/module_label.tscn" id="3_gt24j"]
 [ext_resource type="Texture2D" uid="uid://dtxsd28ymyvni" path="res://assets/art/machine_hello_world/小钱红.png" id="3_hl1ch"]
 [ext_resource type="Texture2D" uid="uid://bipsm80me8uqd" path="res://assets/art/machine_hello_world/小钱蓝.png" id="4_xxt7i"]

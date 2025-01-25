@@ -10,6 +10,8 @@ extends Node2D
 @onready var enemy_creator: EnemyCreator = $EnemyCreator
 @onready var acitvate_number_shower: AcitvateNumberShower = $AcitvateNumberShower
 @onready var activate_tile_map_layer: TileMapLayer = $ActivateTileMapLayer
+@onready var end_menu: EndMenu = $CanvasLayer/EndMenu
+@onready var pause_menu: PauseMenu = $CanvasLayer/PauseMenu
 
 const BLUE_CORE: PackedScene = preload("res://scenes/machine_elements/blue_core.tscn")
 const GUN_PART: PackedScene = preload("res://scenes/machine_elements/gun_part.tscn")
@@ -89,11 +91,18 @@ func detect_game_end(): # 该函数连接到 after all activated 上, 用于检�
 	elif friend_cnt == 0:
 		lose()
 
+func close_pause_menu():
+	if pause_menu.is_paused:
+		pause_menu._change_pause_state()
+	pause_menu.is_exiting = true
+
 func win():
-	print("win!")
+	close_pause_menu()
+	end_menu.init_and_show_end_menu(true)
 
 func lose():
-	print("lose!")
+	close_pause_menu()
+	end_menu.init_and_show_end_menu(false)
 
 # 根据两个位置的相对关系确定方向
 # 返回 Globals.HexDirection 中的一个值
@@ -206,7 +215,7 @@ func activate_nodes(component: Array) -> void:
 						Globals.Team.Neutral:
 							activate_tile_map_layer.set_cell(pos, 0, Vector2i(0, 0)) # test
 		
-		await get_tree().create_timer(0.6).timeout
+		await get_tree().create_timer(0.9).timeout
 	cur_activating_cnt -= 1
 
 # 实现同一位置多次激活时多次激活的中间间隔
@@ -226,7 +235,7 @@ func activate_helper(scene, energies_dirs):
 				_:
 					color = "#8B4513"
 			acitvate_number_shower.show_num(energy_dir[0], scene.tile_pos, color)
-			await get_tree().create_timer(0.23).timeout
+			await get_tree().create_timer(0.3).timeout
 
 # 判断pos处是否有module且是core
 func _is_core(pos: Vector2i) -> bool:

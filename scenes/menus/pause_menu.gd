@@ -1,3 +1,4 @@
+class_name PauseMenu
 extends Control
 
 @onready var continue_button = $CenterContainer/HBoxContainer/VBoxContainer/ContinueButton

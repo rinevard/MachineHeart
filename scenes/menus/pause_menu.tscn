@@ -51,7 +51,7 @@ text = "继续"
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 theme_override_font_sizes/font_size = 64
-text = "返回菜单"
+text = "回到主菜单"
 
 [node name="RightPlaceHolder" type="Control" parent="CenterContainer/HBoxContainer"]
 custom_minimum_size = Vector2(400, 0)

@@ -9,8 +9,8 @@ const MAX_SCALE: float = 1.0         # 最大缩放
 const END_SCALE: float = 1.0         # 结束缩放
 const FLOAT_DISTANCE1: float = 40.0  # 第一段上升距离
 const FLOAT_DISTANCE2: float = 50.0  # 第二段上升距离
-const GROW_DURATION: float = 0.2     # 放大动画时间
-const PAUSE_DURATION: float = 0.05    # 停顿时间
+const GROW_DURATION: float = 0.1     # 放大动画时间
+const PAUSE_DURATION: float = 0.2    # 停顿时间
 const SHRINK_DURATION: float = 0.1   # 缩小动画时间
 
 func _ready():

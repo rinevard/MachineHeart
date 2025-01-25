@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://cwiectn7r5abn"]
+[gd_scene load_steps=14 format=4 uid="uid://cwiectn7r5abn"]
 
 [ext_resource type="TileSet" uid="uid://b4f0qe47jrvty" path="res://resources/hexa_tiles.tres" id="1_5fgrd"]
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_m83rm"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://31fd3sa03mbs" path="res://scenes/ui/acitvate_number_shower.tscn" id="7_o8hik"]
 [ext_resource type="AudioStream" uid="uid://c8r6me3ytpfy" path="res://assets/sfx/place-100513.mp3" id="8_qpph7"]
 [ext_resource type="PackedScene" uid="uid://dlmn3yymlw52o" path="res://scenes/menus/pause_menu.tscn" id="11_ydlnc"]
+[ext_resource type="PackedScene" uid="uid://d30rwwxxuxjy4" path="res://scenes/menus/end_menu.tscn" id="13_mante"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_m83rm")
@@ -25,8 +26,8 @@ metadata/_edit_lock_ = true
 
 [node name="bg" type="Sprite2D" parent="."]
 modulate = Color(0.398793, 0.398793, 0.398793, 1)
-position = Vector2(-1390, -1076)
-scale = Vector2(1.215, 1.33325)
+position = Vector2(-4238, -2132)
+scale = Vector2(2, 2)
 texture = ExtResource("4_xtri4")
 centered = false
 
@@ -57,5 +58,7 @@ max_polyphony = 16
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("11_ydlnc")]
+
+[node name="EndMenu" parent="CanvasLayer" instance=ExtResource("13_mante")]
 
 [connection signal="item_bought" from="ShopCanvasLayer/Shop" to="MouseHandler" method="_on_shop_item_bought"]
