@@ -6,7 +6,7 @@ extends Node2D
 
 # 动画参数
 const INITIAL_SCALE := 0.05
-const FINAL_SCALE := 0.2
+const FINAL_SCALE := 0.5
 const MOVE_DISTANCE := -200.0
 const SCALE_DURATION := 0.1
 const MOVE_DURATION := 0.5
@@ -48,7 +48,7 @@ func _ready():
 	
 	# 播放音效
 	get_money_audio_stream_player.play()
-	
+
 	# 等待动画和音效都完成
 	await tween.finished
 	await get_money_audio_stream_player.finished

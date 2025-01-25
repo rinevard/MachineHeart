@@ -1,7 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://b4ud223q2vbei"]
+[gd_scene load_steps=8 format=3 uid="uid://b4ud223q2vbei"]
 
 [ext_resource type="Script" path="res://scenes/machine_elements/sword_part.gd" id="1_xvpeg"]
-[ext_resource type="Texture2D" uid="uid://bvxwhimrucdr5" path="res://assets/art/sword.png" id="2_e0d8w"]
+[ext_resource type="Texture2D" uid="uid://b0sltqhf88xs5" path="res://assets/art/machine_hello_world/剑灰.png" id="2_uyjxm"]
+[ext_resource type="Texture2D" uid="uid://dsrc5aj4512n8" path="res://assets/art/machine_hello_world/剑蓝.png" id="2_v5wej"]
+[ext_resource type="Texture2D" uid="uid://2f6xaiswqsim" path="res://assets/art/machine_hello_world/剑红.png" id="3_b8c7c"]
 [ext_resource type="AudioStream" uid="uid://f1faqth62jgb" path="res://assets/sfx/sword.mp3" id="3_qheqs"]
 [ext_resource type="PackedScene" uid="uid://ckxswmorfpp0w" path="res://scenes/ui/module_label.tscn" id="4_l10a0"]
 
@@ -12,14 +14,17 @@ radius = 60.0
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("1_xvpeg")
+neutral_fig = ExtResource("2_uyjxm")
+enemy_fig = ExtResource("3_b8c7c")
+friend_fig = ExtResource("2_v5wej")
 cost = 4
-sold = 1
-default_health = 5
+sold = 2
+default_health = 4
 effec = "接收到能量时，向能量传递方向劈砍，造成 2x 点伤害"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.25, 0.25)
-texture = ExtResource("2_e0d8w")
+rotation = 2.61799
+texture = ExtResource("2_uyjxm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_du0jt")

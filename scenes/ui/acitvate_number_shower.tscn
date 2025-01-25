@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://31fd3sa03mbs"]
+
+[ext_resource type="Script" path="res://scenes/ui/acitvate_number_shower.gd" id="1_ki6lu"]
+[ext_resource type="TileSet" uid="uid://b4f0qe47jrvty" path="res://resources/hexa_tiles.tres" id="2_feojg"]
+
+[node name="AcitvateNumberShower" type="Node2D"]
+script = ExtResource("1_ki6lu")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2_feojg")

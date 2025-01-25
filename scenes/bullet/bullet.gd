@@ -18,7 +18,7 @@ func init_bullet(new_energy: int, dir: Vector2, new_team):
 	energy = new_energy
 	direction = dir.normalized()
 	rotation = dir.angle()
-	update_team(new_team)
+	call_deferred("update_team", new_team)
 
 func update_team(new_team):
 	team = new_team
@@ -62,5 +62,6 @@ func _on_area_entered(area: Area2D):
 			bullet_particle.process_material.color = Color.ORANGE
 		else:
 			bullet_particle.process_material.color = Color.SKY_BLUE
-		if area.has_method("hit_shake"):
-			area.hit_shake(direction)
+		if area.has_method("hit_shake") and area.has_method("is_protected"):
+			if not area.is_protected():
+				area.hit_shake(direction)

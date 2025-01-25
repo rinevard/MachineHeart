@@ -1,8 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://dtk28h2jeyd8l"]
+[gd_scene load_steps=9 format=3 uid="uid://dtk28h2jeyd8l"]
 
-[ext_resource type="Texture2D" uid="uid://bnhshj0vjdgpb" path="res://assets/art/shield.png" id="1_2tkxn"]
 [ext_resource type="Script" path="res://scenes/machine_elements/shield_part.gd" id="1_48uj2"]
+[ext_resource type="Texture2D" uid="uid://badis7q20tp5y" path="res://assets/art/machine/shield.png" id="2_nayhp"]
+[ext_resource type="Texture2D" uid="uid://mcr4w3l5b3yl" path="res://assets/art/machine_hello_world/护盾灰.png" id="2_u4trk"]
+[ext_resource type="Texture2D" uid="uid://ckepu7hb6a3vo" path="res://assets/art/machine_hello_world/护盾红.png" id="3_natjp"]
 [ext_resource type="PackedScene" uid="uid://2g547fehw3j8" path="res://scenes/protect_circle/protect_circle.tscn" id="3_u8dro"]
+[ext_resource type="Texture2D" uid="uid://dxv31tw2p4x0a" path="res://assets/art/machine_hello_world/护盾蓝.png" id="4_td5tl"]
 [ext_resource type="PackedScene" uid="uid://ckxswmorfpp0w" path="res://scenes/ui/module_label.tscn" id="4_xr3ef"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_iw67b"]
@@ -12,14 +15,16 @@ radius = 60.0
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("1_48uj2")
+neutral_fig = ExtResource("2_u4trk")
+enemy_fig = ExtResource("3_natjp")
+friend_fig = ExtResource("4_td5tl")
 cost = 5
 sold = 2
-default_health = 4
+default_health = 3
 effec = "接收到能量时，生成能抵抗一次伤害的防护罩保护相邻零件，生成x次。防护罩最多叠加4个。"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.3, 0.3)
-texture = ExtResource("1_2tkxn")
+texture = ExtResource("2_nayhp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_iw67b")

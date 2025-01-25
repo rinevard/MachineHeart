@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://cih0srmlmixrl"]
+[gd_scene load_steps=8 format=3 uid="uid://cih0srmlmixrl"]
 
 [ext_resource type="Script" path="res://scenes/machine_elements/gun_part.gd" id="1_d5xpv"]
-[ext_resource type="Texture2D" uid="uid://cbyq1nwt5dyl" path="res://assets/art/gun.png" id="2_fysn7"]
+[ext_resource type="Texture2D" uid="uid://boj1513wsqnmp" path="res://assets/art/machine_hello_world/枪灰.png" id="2_p41e3"]
 [ext_resource type="AudioStream" uid="uid://cffla3bcarlgh" path="res://assets/sfx/gunshot.mp3" id="3_2sttv"]
+[ext_resource type="Texture2D" uid="uid://dljy8ku5aduw5" path="res://assets/art/machine_hello_world/枪红.png" id="3_hdpna"]
 [ext_resource type="PackedScene" uid="uid://ckxswmorfpp0w" path="res://scenes/ui/module_label.tscn" id="4_bl11j"]
+[ext_resource type="Texture2D" uid="uid://dycbtfy37udfu" path="res://assets/art/machine_hello_world/枪蓝.png" id="4_mprxi"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6j1u4"]
 radius = 60.0
@@ -12,14 +14,17 @@ radius = 60.0
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("1_d5xpv")
+neutral_fig = ExtResource("2_p41e3")
+enemy_fig = ExtResource("3_hdpna")
+friend_fig = ExtResource("4_mprxi")
 cost = 3
 sold = 1
-default_health = 3
+default_health = 2
 effec = "接收到能量时，向能量传递方向射出三颗子弹，每颗子弹造成 x 点伤害"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.3, 0.3)
-texture = ExtResource("2_fysn7")
+rotation = 0.523599
+texture = ExtResource("2_p41e3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_6j1u4")

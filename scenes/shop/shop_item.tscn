@@ -3,14 +3,14 @@
 [ext_resource type="Script" path="res://scenes/shop/shop_item.gd" id="1_h3mym"]
 
 [node name="ShopItem" type="Button"]
-custom_minimum_size = Vector2(200, 200)
+custom_minimum_size = Vector2(160, 160)
 offset_right = 40.0
 offset_bottom = 40.0
 mouse_filter = 1
 script = ExtResource("1_h3mym")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
-custom_minimum_size = Vector2(200, 200)
+custom_minimum_size = Vector2(160, 160)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0

@@ -3,7 +3,7 @@ extends Control
 
 signal item_bought(item: PackedScene)
 
-@onready var money_label = $CenterContainer/HBoxContainer/VBoxContainer/MoneyLabel
+@onready var money_label = $CenterContainer/HBoxContainer/VBoxContainer/ColorRect/MoneyLabel
 @onready var refresh_button = $CenterContainer/HBoxContainer/VBoxContainer/RefreshButton
 @onready var buy_audio_stream_player: AudioStreamPlayer = $BuyAudioStreamPlayer
 @onready var refresh_audio_stream_player: AudioStreamPlayer = $RefreshAudioStreamPlayer

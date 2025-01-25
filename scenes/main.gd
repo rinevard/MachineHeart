@@ -8,9 +8,12 @@ extends Node2D
 @onready var chess_place_audio_stream_player: AudioStreamPlayer = $ChessPlaceAudioStreamPlayer
 @onready var mouse_handler: MouseHandler = $MouseHandler
 @onready var enemy_creator: EnemyCreator = $EnemyCreator
+@onready var acitvate_number_shower: AcitvateNumberShower = $AcitvateNumberShower
+@onready var activate_tile_map_layer: TileMapLayer = $ActivateTileMapLayer
 
 const BLUE_CORE: PackedScene = preload("res://scenes/machine_elements/blue_core.tscn")
 const GUN_PART: PackedScene = preload("res://scenes/machine_elements/gun_part.tscn")
+const SHIELD_PART: PackedScene = preload("res://scenes/machine_elements/shield_part.tscn")
 
 # 以下皆为 tile_pos
 # 连通分量列表，每个元素是[core/null, part1, part2, ...]
@@ -23,6 +26,7 @@ var cur_activating_cnt: int = 0: # 对当前正在被激活的机械进行计数
 	set(value):
 		cur_activating_cnt = value
 		if cur_activating_cnt == 0:
+			activate_tile_map_layer.clear()
 			detect_game_end()
 
 var turn_able_to_end: bool = true
@@ -39,8 +43,10 @@ func _ready():
 	
 	# 游戏开始时在中间放核心和枪给玩家
 	_on_successfully_put(BLUE_CORE, Vector2i(20, 15), Globals.Team.Friend, true)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(1.0).timeout
 	_on_successfully_put(GUN_PART, Vector2i(21, 15), Globals.Team.Friend, true)
+	await get_tree().create_timer(0.4).timeout
+	_on_successfully_put(SHIELD_PART, Vector2i(19, 15), Globals.Team.Friend, true)
 
 	#------------test---------------
 	_create_enemy(8)
@@ -82,8 +88,6 @@ func detect_game_end(): # 该函数连接到 after all activated 上, 用于检�
 		win()
 	elif friend_cnt == 0:
 		lose()
-	print("friend_cnt: ", friend_cnt)
-	print("enemycnt: ", enemy_cnt)
 
 func win():
 	print("win!")
@@ -191,7 +195,18 @@ func activate_nodes(component: Array) -> void:
 				var scene = activate_parts[i][pos][0]
 				var energies_dirs = activate_parts[i][pos][1]
 				activate_helper(scene, energies_dirs)
-		await get_tree().create_timer(0.4).timeout
+				# 修改地板来表示激活
+				if scene != null and is_instance_valid(scene) and \
+							scene.get("team") != null:
+					match scene.team:
+						Globals.Team.Friend:
+							activate_tile_map_layer.set_cell(pos, 4, Vector2i(0, 0)) # test
+						Globals.Team.Enemy:
+							activate_tile_map_layer.set_cell(pos, 2, Vector2i(0, 0)) # test
+						Globals.Team.Neutral:
+							activate_tile_map_layer.set_cell(pos, 0, Vector2i(0, 0)) # test
+		
+		await get_tree().create_timer(0.6).timeout
 	cur_activating_cnt -= 1
 
 # 实现同一位置多次激活时多次激活的中间间隔
@@ -200,7 +215,18 @@ func activate_helper(scene, energies_dirs):
 		if scene != null and is_instance_valid(scene) and \
 			scene.has_method("activate"):
 			scene.activate(energy_dir[0], energy_dir[1])
-			await get_tree().create_timer(0.1).timeout
+			var color: String
+			match scene.team:
+				Globals.Team.Friend:
+					color = "#00CED1"
+				Globals.Team.Enemy:
+					color = "#FF8C00"
+				Globals.Team.Neutral:
+					color = "#8B4513"
+				_:
+					color = "#8B4513"
+			acitvate_number_shower.show_num(energy_dir[0], scene.tile_pos, color)
+			await get_tree().create_timer(0.23).timeout
 
 # 判断pos处是否有module且是core
 func _is_core(pos: Vector2i) -> bool:
@@ -362,6 +388,7 @@ func _on_successfully_delete(pos: Vector2i, prioritize_friend: bool) -> void:
 	removed_scene.visible = false
 	removed_scene.call_deferred("queue_free")
 	
+	activate_tile_map_layer.erase_cell(pos)
 	# 从映射中移除
 	pos_to_component_idx.erase(pos)
 	Globals.pos_to_module.erase(pos)

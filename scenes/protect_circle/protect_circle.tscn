@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://2g547fehw3j8"]
+[gd_scene load_steps=7 format=3 uid="uid://2g547fehw3j8"]
 
 [ext_resource type="Script" path="res://scenes/protect_circle/protect_circle.gd" id="1_6hyn6"]
-[ext_resource type="Texture2D" uid="uid://dh641occ2rkve" path="res://assets/art/blue-circle.svg" id="1_tgbxm"]
+[ext_resource type="Texture2D" uid="uid://x70kf8rqjdll" path="res://assets/art/machine_hello_world/护盾特效蓝.png" id="2_bs6yc"]
+[ext_resource type="Texture2D" uid="uid://caer8e4athu6a" path="res://assets/art/machine_hello_world/护盾特效灰.png" id="2_rxmdi"]
+[ext_resource type="Texture2D" uid="uid://bbncd4dyr73fy" path="res://assets/art/machine_hello_world/护盾特效红.png" id="3_sy21q"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_a4tvl"]
 radius = 219.002
@@ -14,11 +16,13 @@ z_index = 4
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1_6hyn6")
+neutral_circle = ExtResource("2_rxmdi")
+blue_circle = ExtResource("2_bs6yc")
+red_circle = ExtResource("3_sy21q")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 self_modulate = Color(1, 1, 1, 0.341176)
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("1_tgbxm")
+texture = ExtResource("2_bs6yc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_a4tvl")

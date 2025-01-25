@@ -1,6 +1,15 @@
-[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://b4f0qe47jrvty"]
+[gd_resource type="TileSet" load_steps=11 format=3 uid="uid://b4f0qe47jrvty"]
 
+[ext_resource type="Texture2D" uid="uid://h46ljaimuhby" path="res://assets/art/machine/base_bg_tile.png" id="1_5pr6s"]
 [ext_resource type="Texture2D" uid="uid://dpcpccen6r5uq" path="res://assets/art/hexagonAll_sheet.png" id="1_57fim"]
+[ext_resource type="Texture2D" uid="uid://7dm3pi2rer1c" path="res://assets/art/machine/red_heart_bg_tile.png" id="3_1cy1p"]
+[ext_resource type="Texture2D" uid="uid://cxyh2twrlf41t" path="res://assets/art/machine/empty_bg_tile.png" id="4_jo6xe"]
+[ext_resource type="Texture2D" uid="uid://cj61fo3dguiuq" path="res://assets/art/machine/green_heart_bg_tile.png" id="5_5ic1o"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_brp57"]
+texture = ExtResource("1_5pr6s")
+texture_region_size = Vector2i(120, 139)
+0:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_82prg"]
 texture = ExtResource("1_57fim")
@@ -165,7 +174,26 @@ texture_region_size = Vector2i(120, 139)
 9:13/0 = 0
 10:13/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_uug3n"]
+texture = ExtResource("3_1cy1p")
+texture_region_size = Vector2i(120, 139)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_pbbhc"]
+texture = ExtResource("4_jo6xe")
+texture_region_size = Vector2i(120, 139)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_g76vl"]
+texture = ExtResource("5_5ic1o")
+texture_region_size = Vector2i(120, 139)
+0:0/0 = 0
+
 [resource]
 tile_shape = 3
 tile_size = Vector2i(120, 139)
 sources/1 = SubResource("TileSetAtlasSource_82prg")
+sources/0 = SubResource("TileSetAtlasSource_brp57")
+sources/2 = SubResource("TileSetAtlasSource_uug3n")
+sources/3 = SubResource("TileSetAtlasSource_pbbhc")
+sources/4 = SubResource("TileSetAtlasSource_g76vl")

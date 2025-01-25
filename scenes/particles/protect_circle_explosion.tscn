@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://cvdt3qdago5vy"]
+
+[ext_resource type="Script" path="res://scenes/particles/protect_circle_explosion.gd" id="1_slb2m"]
+
+[sub_resource type="Gradient" id="Gradient_p17lx"]
+offsets = PackedFloat32Array(0.282609, 1)
+colors = PackedColorArray(0.270588, 0.513726, 0.94902, 0.741176, 0.858824, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_fcpes"]
+gradient = SubResource("Gradient_p17lx")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_na5oa"]
+particle_flag_disable_z = true
+spread = 180.0
+initial_velocity_min = 400.0
+initial_velocity_max = 600.0
+gravity = Vector3(0, 0, 0)
+scale_min = 8.0
+scale_max = 12.0
+color_ramp = SubResource("GradientTexture1D_fcpes")
+
+[node name="ProtectCircleExplosion" type="GPUParticles2D"]
+emitting = false
+amount = 40
+process_material = SubResource("ParticleProcessMaterial_na5oa")
+lifetime = 0.4
+one_shot = true
+script = ExtResource("1_slb2m")

@@ -1,9 +1,16 @@
 class_name ProtectCircle
 extends Area2D
 
+const PROTECT_CIRCLE_EXPLOSION: PackedScene = preload("res://scenes/particles/protect_circle_explosion.tscn")
+
 var modules_in_shield = [] # 记录在防护罩范围内的所有节点
 var team = Globals.Team.Neutral
 var shield_count: int = 0
+@onready var sprite_2d: Sprite2D = $Sprite2D
+
+@export var neutral_circle: CompressedTexture2D
+@export var blue_circle: CompressedTexture2D
+@export var red_circle: CompressedTexture2D
 
 func _ready():
 	init_protect_circle(team)
@@ -14,6 +21,13 @@ func init_protect_circle(new_team):
 
 func update_team(new_team):
 	team = new_team
+	match team:
+		Globals.Team.Friend:
+			sprite_2d.texture = blue_circle
+		Globals.Team.Enemy:
+			sprite_2d.texture = red_circle
+		Globals.Team.Neutral:
+			sprite_2d.texture = neutral_circle
 	remove_protection()
 	if shield_count > 0:
 		protect_team_in_shield()
@@ -25,17 +39,19 @@ func hurt(amount: int):
 	shield_count -= 1
 	# 盾碎时
 	if shield_count <= 0:
+		shield_count = 0
 		break_shield()
 
 func activate_shield():
 	shield_count += 1
-	if shield_count > 4:
-		shield_count = 4
+	if shield_count > 3:
+		shield_count = 3
 	if shield_count == 1: # 从无盾到有盾的转换
 		enable_shield_and_protect_team()
 
 func break_shield():
 	shield_count = 0
+	await get_tree().create_timer(0.22).timeout
 	disable_shield_and_clear_protection()
 
 func remove_protection():

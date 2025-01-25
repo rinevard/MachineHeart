@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://cuarqm5g0ik77"]
+
+[ext_resource type="Script" path="res://scenes/ui/floating_number.gd" id="1_2gskt"]
+
+[node name="FloatingNumber" type="Node2D"]
+z_index = 20
+script = ExtResource("1_2gskt")
+
+[node name="FloatingNumber" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="RichTextLabel" type="RichTextLabel" parent="FloatingNumber"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -84.0
+offset_top = -159.0
+offset_right = 85.0
+offset_bottom = 98.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "[center]
+[font_size=64]
+[outline_size=2][outline_color=#000000][color=#FFD700]100[/color][/outline_color][/outline_size]
+[/font_size]
+[/center]"
+fit_content = true

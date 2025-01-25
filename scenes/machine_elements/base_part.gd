@@ -6,9 +6,24 @@ const EXPLODE_PARTICLE = preload("res://scenes/particles/explode_particle.tscn")
 @onready var module_label: ModuleLabel = $ModuleLabel
 signal died(tile_pos: Vector2i, prioritize_friend: bool)
 
+@onready var sprite_2d: Sprite2D = $Sprite2D
+
+@export var neutral_fig: CompressedTexture2D
+@export var enemy_fig: CompressedTexture2D
+@export var friend_fig: CompressedTexture2D
+
 var team = Globals.Team.Neutral:
 	set(value):
 		team = value
+		assert(neutral_fig != null and enemy_fig != null and friend_fig != null, 
+		"本零件的贴图没有完整设置!")
+		match team:
+			Globals.Team.Friend:
+				sprite_2d.texture = friend_fig
+			Globals.Team.Enemy:
+				sprite_2d.texture = enemy_fig
+			Globals.Team.Neutral:
+				sprite_2d.texture = neutral_fig
 		call_deferred("_update_collision_layer")
 var type = Globals.MachineType.Part
 @export var cost: int = -1

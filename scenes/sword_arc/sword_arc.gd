@@ -5,7 +5,7 @@ var energy: int = 1
 var direction = Vector2(1, 0)
 var team = Globals.Team.Neutral
 
-var rest_live_time: float = 0.5
+var rest_live_time: float = 0.2
 
 func _process(delta):
 	rest_live_time -= delta
@@ -49,5 +49,6 @@ func _update_collision_mask() -> void:
 func _on_area_entered(area: Area2D):
 	if area.has_method("hurt"):
 		area.hurt(2 * energy)
-	if area.has_method("hit_shake"):
-		area.hit_shake(direction)
+	if area.has_method("hit_shake") and area.has_method("is_protected"):
+		if not area.is_protected():
+			area.hit_shake(direction)
