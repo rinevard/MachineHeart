@@ -9,10 +9,11 @@ extends Control
 @onready var up_place_holder_2: Control = $VBoxContainer/UpPlaceHolder2
 @onready var left_place_holder: Control = $VBoxContainer/CenterContainer/HBoxContainer/LeftPlaceHolder
 @onready var right_place_holder: Control = $VBoxContainer/CenterContainer/HBoxContainer/RightPlaceHolder
-
+@onready var instruction : Control = $Instruction
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	instruction.hide()
 	var screen_size = DisplayServer.window_get_size()
 	var width = screen_size.x
 	var height = screen_size.y
@@ -49,5 +50,11 @@ func _on_exit_pressed():
 	await tween.finished
 	get_tree().quit()
 
+func _unhandled_input(event):
+	if event.is_action_pressed("pause"):
+		instruction.hide()
+		# 关闭说明书
+
 func _on_instruction_pressed():
-	pass
+	instruction.show()
+	# 打开说明书
